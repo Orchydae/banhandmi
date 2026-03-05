@@ -1,0 +1,71 @@
+.feature-grid {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-md);
+}
+
+.feature-card {
+    border-radius: var(--radius-md);
+    padding: var(--spacing-lg) var(--spacing-md);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-sm);
+    cursor: pointer;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    min-height: 120px;
+    text-decoration: none;
+    color: var(--color-text);
+}
+
+.feature-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+}
+
+.feature-card__icon {
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    color: var(--color-accent);
+}
+
+.feature-card--golden .feature-card__icon {
+    color: var(--color-primary-dark);
+    background: rgba(255, 192, 103, 0.25);
+    border-color: rgba(255, 192, 103, 0.35);
+}
+
+.feature-card__title {
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-align: center;
+    line-height: 1.2;
+}
+
+.feature-card__subtitle {
+    font-family: var(--font-display);
+    font-size: 0.55rem;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--color-text-light);
+}
+
+/* Golden accent card */
+.feature-card--golden {
+    background: linear-gradient(135deg, rgba(255, 192, 103, 0.3), rgba(255, 192, 103, 0.12));
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    border: 1px solid rgba(255, 192, 103, 0.35);
+    box-shadow: var(--glass-shadow);
+}
