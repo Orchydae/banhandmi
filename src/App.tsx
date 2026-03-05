@@ -1,9 +1,9 @@
 import './App.css'
-import ProfileHeader from './components/ProfileHeader'
-import StatsCounter from './components/StatsCounter'
-import FeatureGrid from './components/FeatureGrid'
-import SocialLinks from './components/SocialLinks'
-import TerminalPanel from './components/TerminalPanel'
+import ProfileHeader from './components/ProfileHeader/ProfileHeader'
+import StatsCounter from './components/StatsCounter/StatsCounter'
+import FeatureGrid from './components/FeatureGrid/FeatureGrid'
+import SocialLinks from './components/SocialLinks/SocialLinks'
+import TerminalPanel from './components/TerminalPanel/TerminalPanel'
 
 function App() {
     return (
