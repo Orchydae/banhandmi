@@ -1,0 +1,106 @@
+/* ===========================
+   Design System – @banhandmi
+   =========================== */
+
+:root {
+  /* --- Colors --- */
+  --color-primary: #FFC067;
+  --color-primary-light: #FFD699;
+  --color-primary-dark: #E5A044;
+  --color-accent: #3AAFA9;
+  --color-accent-dark: #2B7A78;
+
+  --color-bg-start: #FFF5E6;
+  --color-bg-mid: #FFE0B2;
+  --color-bg-end: #FFC067;
+
+  --color-text: #2D2D2D;
+  --color-text-secondary: #6B6B6B;
+  --color-text-light: #999999;
+
+  /* --- Glass --- */
+  --glass-bg: rgba(255, 255, 255, 0.35);
+  --glass-bg-strong: rgba(255, 255, 255, 0.55);
+  --glass-border: rgba(255, 255, 255, 0.45);
+  --glass-blur: 18px;
+  --glass-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+
+  /* --- Typography --- */
+  --font-body: 'Plus Jakarta Sans', sans-serif;
+  --font-display: 'Space Mono', monospace;
+
+  /* --- Spacing --- */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  --spacing-2xl: 48px;
+
+  /* --- Radius --- */
+  --radius-sm: 12px;
+  --radius-md: 20px;
+  --radius-lg: 28px;
+  --radius-full: 50%;
+}
+
+/* === Reset & Base === */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: var(--font-body);
+  color: var(--color-text);
+  min-height: 100dvh;
+  background: linear-gradient(
+    170deg,
+    var(--color-bg-start) 0%,
+    var(--color-bg-mid) 40%,
+    var(--color-bg-end) 100%
+  );
+  background-attachment: fixed;
+}
+
+#root {
+  min-height: 100dvh;
+  display: flex;
+  justify-content: center;
+}
+
+/* === Glass Utility === */
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+}
+
+.glass-strong {
+  background: var(--glass-bg-strong);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+}
+
+/* === Scrollbar === */
+::-webkit-scrollbar {
+  display: none;
+}
+
+body {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
