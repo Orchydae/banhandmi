@@ -1,13 +1,18 @@
 import { useRef, useEffect, useCallback, useState } from 'react'
-import { Share2, Cookie } from 'lucide-react'
+import { Link, Cookie } from 'lucide-react'
 import { useTreatsCounter } from '../../hooks/useTreatsCounter'
 import './ProfileHeader.css'
 
-export default function ProfileHeader() {
+interface ProfileHeaderProps {
+    onFeed?: () => void;
+}
+
+export default function ProfileHeader({ onFeed }: ProfileHeaderProps) {
     const { treats, increment } = useTreatsCounter()
     const [isPlaying, setIsPlaying] = useState(false)
     const [isDragging, setIsDragging] = useState(false)
     const videoRef = useRef<HTMLVideoElement>(null)
+    const audioRef = useRef<HTMLAudioElement>(null)
     const dragIconRef = useRef<HTMLDivElement>(null)
     const avatarRingRef = useRef<HTMLDivElement>(null)
     const floatingCloneRef = useRef<HTMLElement | null>(null)
@@ -59,9 +64,18 @@ export default function ProfileHeader() {
                 e.clientY <= rect.bottom
             if (over) {
                 increment()
+                onFeed?.()
                 setIsPlaying(true)
-                videoRef.current.currentTime = 0
-                videoRef.current.play()
+                if (videoRef.current) {
+                    videoRef.current.currentTime = 0
+                    videoRef.current.play().catch(() => { })
+                }
+                setTimeout(() => {
+                    if (audioRef.current) {
+                        audioRef.current.currentTime = 0
+                        audioRef.current.play().catch(() => { })
+                    }
+                }, 1000)
             }
         }
         // Clean up
@@ -88,14 +102,27 @@ export default function ProfileHeader() {
         setIsPlaying(false)
     }
 
+    const [copied, setCopied] = useState(false)
+
+    const handleShare = async () => {
+        try {
+            await navigator.clipboard.writeText(window.location.href)
+            setCopied(true)
+            setTimeout(() => setCopied(false), 1500)
+        } catch {
+            // Fallback: do nothing
+        }
+    }
+
     const formattedTreats = treats.toString().padStart(9, '0').replace(/(\d{3})(?=\d)/g, '$1 ')
 
     return (
         <header className="profile-header" id="profile-header">
             <div className="profile-header__top-bar">
                 <span className="profile-header__handle">@banhandmi</span>
-                <button className="profile-header__share-btn" aria-label="Share profile">
-                    <Share2 size={20} />
+                <button className="profile-header__share-btn" aria-label="Copy link" onClick={handleShare}>
+                    <Link size={20} />
+                    {copied && <span className="profile-header__copied-tooltip">Link Copied!</span>}
                 </button>
             </div>
 
@@ -113,12 +140,17 @@ export default function ProfileHeader() {
                     playsInline
                     onEnded={handleVideoEnded}
                 />
+                <audio ref={audioRef} src="/minecraft-eating.mp3" preload="auto" />
             </div>
 
             <h1 className="profile-header__name">Bánh</h1>
             <p className="profile-header__bio">A Shiba Inu that reinvents reality and dreams.</p>
 
             <div className="stats-container">
+                <div className="stats-counter__panel">
+                    <span className="stats-counter__label">Number_of_treats_given</span>
+                    <span className="stats-counter__value">{formattedTreats}</span>
+                </div>
                 <div className="stats-counter__drag">
                     <span className="stats-counter__drag-label">DRAG TO FEED!</span>
                     <div
@@ -129,10 +161,6 @@ export default function ProfileHeader() {
                     >
                         <Cookie size={22} />
                     </div>
-                </div>
-                <div className="stats-counter__panel">
-                    <span className="stats-counter__label">Number_of_treats_given</span>
-                    <span className="stats-counter__value">{formattedTreats}</span>
                 </div>
             </div>
         </header>

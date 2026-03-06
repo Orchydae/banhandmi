@@ -1,33 +1,30 @@
-import { useState } from 'react'
 import { Routes, Route } from 'react-router-dom'
 import './App.css'
 import ProfileHeader from './components/ProfileHeader/ProfileHeader'
 import FeatureGrid from './components/FeatureGrid/FeatureGrid'
 import SocialLinks from './components/SocialLinks/SocialLinks'
-import TerminalPanel, { LogEntry } from './components/TerminalPanel/TerminalPanel'
+import TerminalPanel from './components/TerminalPanel/TerminalPanel'
 import CategoryPage from './modules/CategoryPage/CategoryPage'
+import { useTerminalLogs } from './hooks/useTerminalLogs'
 
-const INITIAL_LOGS: LogEntry[] = [
-    { id: 'init-1', message: 'Initializing bio-link protocol...' },
-    { id: 'init-2', message: 'Scanning for dream frequencies...' },
-    { id: 'init-3', message: 'Status: Stable', isStatus: true },
+const TREAT_MESSAGES = [
+    'Thanks for the treato!',
+    'Woah! You\'re so kind ~ Waf!',
+    'Are you trying to get me fat?',
 ]
 
 function App() {
-    const [logs, setLogs] = useState<LogEntry[]>(INITIAL_LOGS)
+    const { logs, addLog } = useTerminalLogs()
 
     const handleFeatureClick = (featureName: string) => {
-        const now = new Date()
-        const timestamp = now.toLocaleTimeString([], { hour12: false })
+        const timestamp = new Date().toLocaleTimeString([], { hour12: false })
+        addLog({ timestamp, message: `Accessed module: ${featureName}` })
+    }
 
-        setLogs((prevLogs) => [
-            ...prevLogs,
-            {
-                id: `log-${Date.now()}-${Math.random()}`,
-                timestamp,
-                message: `Accessed module: ${featureName}`
-            }
-        ])
+    const handleFeed = () => {
+        const timestamp = new Date().toLocaleTimeString([], { hour12: false })
+        const message = TREAT_MESSAGES[Math.floor(Math.random() * TREAT_MESSAGES.length)]
+        addLog({ timestamp, message })
     }
 
     return (
@@ -36,9 +33,11 @@ function App() {
                 path="/"
                 element={
                     <div className="app">
-                        <ProfileHeader />
-                        <FeatureGrid onFeatureClick={handleFeatureClick} />
-                        <SocialLinks />
+                        <ProfileHeader onFeed={handleFeed} />
+                        <div className="app__center-col">
+                            <FeatureGrid onFeatureClick={handleFeatureClick} />
+                            <SocialLinks />
+                        </div>
                         <TerminalPanel logs={logs} />
                     </div>
                 }

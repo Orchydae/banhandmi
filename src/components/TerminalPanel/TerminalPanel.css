@@ -76,3 +76,15 @@
         transform: translateY(0);
     }
 }
+
+/* Desktop: sticky, taller terminal */
+@media (min-width: 1024px) {
+    .terminal-panel {
+        position: sticky;
+        top: var(--spacing-xl);
+    }
+
+    .terminal-panel__body {
+        max-height: 450px;
+    }
+}

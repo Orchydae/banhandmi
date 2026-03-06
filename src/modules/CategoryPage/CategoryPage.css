@@ -7,6 +7,15 @@
     flex-direction: column;
     gap: var(--spacing-lg);
     animation: categoryFadeIn 0.35s ease both;
+    margin: 0 auto;
+    /* keep it centered */
+}
+
+@media (min-width: 1024px) {
+    .category-page {
+        max-width: 1200px;
+        padding: var(--spacing-xl);
+    }
 }
 
 @keyframes categoryFadeIn {

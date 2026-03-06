@@ -5,6 +5,12 @@
     gap: var(--spacing-md);
 }
 
+@media (min-width: 1024px) {
+    .item-list {
+        gap: var(--spacing-lg);
+    }
+}
+
 /* In list mode, cards display horizontally */
 .item-list .item-card {
     flex-direction: row;
@@ -25,6 +31,10 @@
 
 .item-list .item-card__link-icon {
     top: 100%;
-    transform: translateY(-100%);
+    transform: translateY(-125%);
+    opacity: 0;
+}
+
+.item-list .item-card:hover .item-card__link-icon {
     opacity: 1;
 }
