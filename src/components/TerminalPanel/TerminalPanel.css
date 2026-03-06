@@ -15,31 +15,13 @@
     align-items: center;
     gap: var(--spacing-sm);
     margin-bottom: var(--spacing-sm);
-}
-
-.terminal-panel__dot {
-    width: 8px;
-    height: 8px;
-    border-radius: var(--radius-full);
-}
-
-.terminal-panel__dot--red {
-    background: #FF5F57;
-}
-
-.terminal-panel__dot--yellow {
-    background: #FFBD2E;
-}
-
-.terminal-panel__dot--green {
-    background: #28CA42;
+    color: lightgray;
 }
 
 .terminal-panel__title {
     font-family: var(--font-display);
     font-size: 0.65rem;
     font-weight: 400;
-    color: rgba(255, 255, 255, 0.35);
     letter-spacing: 0.05em;
     margin-left: var(--spacing-sm);
 }
@@ -49,6 +31,8 @@
     font-size: 0.78rem;
     line-height: 1.8;
     color: rgba(255, 255, 255, 0.6);
+    max-height: 200px;
+    overflow-y: auto;
 }
 
 .terminal-panel__line {

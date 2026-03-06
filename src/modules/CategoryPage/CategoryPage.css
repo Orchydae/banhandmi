@@ -1,0 +1,103 @@
+.category-page {
+    width: 100%;
+    max-width: 420px;
+    padding: var(--spacing-lg) var(--spacing-md);
+    padding-bottom: var(--spacing-2xl);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+    animation: categoryFadeIn 0.35s ease both;
+}
+
+@keyframes categoryFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Header */
+.category-page__header {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+}
+
+.category-page__back {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-full);
+    border: 1px solid var(--glass-border);
+    background: var(--glass-bg);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--color-accent);
+    transition: transform 0.2s ease, background 0.2s ease;
+    flex-shrink: 0;
+}
+
+.category-page__back:hover {
+    transform: scale(1.08);
+    background: var(--glass-bg-strong);
+}
+
+.category-page__heading {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.category-page__icon {
+    color: var(--color-accent);
+    display: flex;
+    align-items: center;
+}
+
+.category-page__title {
+    font-family: var(--font-display);
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--color-accent);
+    letter-spacing: -0.02em;
+}
+
+/* Content */
+.category-page__content {
+    width: 100%;
+}
+
+/* Loading / empty / error states */
+.category-page__status {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-2xl) var(--spacing-md);
+    color: var(--color-text-secondary);
+    font-size: 0.9rem;
+    text-align: center;
+}
+
+.category-page__status--error {
+    color: var(--color-primary-dark);
+}
+
+.category-page__spinner {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}

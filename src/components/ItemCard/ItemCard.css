@@ -1,0 +1,118 @@
+.item-card {
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    text-decoration: none;
+    color: var(--color-text);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    position: relative;
+}
+
+.item-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.10);
+}
+
+/* Image */
+.item-card__image-wrap {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    background: var(--glass-on-bg);
+}
+
+.item-card__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.item-card:hover .item-card__image {
+    transform: scale(1.05);
+}
+
+/* Body */
+.item-card__body {
+    padding: var(--spacing-sm) var(--spacing-md) var(--spacing-md);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+}
+
+.item-card__name {
+    font-weight: 700;
+    font-size: 0.9rem;
+    line-height: 1.3;
+    color: var(--color-accent);
+}
+
+.item-card__desc-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.item-card__desc {
+    font-size: 0.78rem;
+    line-height: 1.4;
+    color: var(--color-text-secondary);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.item-card__desc--expanded {
+    display: block;
+    -webkit-line-clamp: unset;
+    line-clamp: unset;
+}
+
+.item-card__more {
+    background: none;
+    border: none;
+    padding: 0;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--color-accent);
+    cursor: pointer;
+    align-self: flex-start;
+    transition: opacity 0.2s ease;
+}
+
+.item-card__more:hover {
+    opacity: 0.7;
+}
+
+.item-card__price {
+    font-family: var(--font-display);
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--color-primary-dark);
+}
+
+/* Affiliate link icon */
+.item-card__link-icon {
+    position: absolute;
+    top: var(--spacing-sm);
+    right: var(--spacing-sm);
+    width: 28px;
+    height: 28px;
+    border-radius: var(--radius-full);
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-accent);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.item-card:hover .item-card__link-icon {
+    opacity: 1;
+}

@@ -17,7 +17,22 @@
     transition: transform 0.25s ease, box-shadow 0.25s ease;
     min-height: 120px;
     text-decoration: none;
-    color: var(--color-text);
+    color: var(--color-accent);
+}
+
+.feature-card__title {
+    font-size: 1rem;
+    font-weight: 700;
+    text-align: center;
+}
+
+.feature-card__subtitle {
+    font-family: var(--font-display);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    font-weight: 400;
+    line-height: 0.5;
+    color: var(--color-text-secondary);
 }
 
 .feature-card:hover {
@@ -28,44 +43,31 @@
 .feature-card__icon {
     width: 44px;
     height: 44px;
-    border-radius: var(--radius-sm);
+    border-radius: var(--radius-full);
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 1.3rem;
-    background: var(--glass-bg);
+    background: var(--glass-on-bg);
     border: 1px solid var(--glass-border);
     color: var(--color-accent);
 }
 
-.feature-card--golden .feature-card__icon {
-    color: var(--color-primary-dark);
-    background: rgba(255, 192, 103, 0.25);
-    border-color: rgba(255, 192, 103, 0.35);
-}
-
-.feature-card__title {
-    font-family: var(--font-body);
-    font-size: 0.85rem;
-    font-weight: 700;
-    text-align: center;
-    line-height: 1.2;
-}
-
-.feature-card__subtitle {
-    font-family: var(--font-display);
-    font-size: 0.55rem;
-    font-weight: 400;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    color: var(--color-text-light);
-}
-
-/* Golden accent card */
-.feature-card--golden {
-    background: linear-gradient(135deg, rgba(255, 192, 103, 0.3), rgba(255, 192, 103, 0.12));
+/* Dark accent card ( Upcoming ) */
+.feature-card--dark {
+    background: rgba(1, 3, 2, 0.3);
+    /* --color-dark at 30% opacity */
     backdrop-filter: blur(var(--glass-blur));
     -webkit-backdrop-filter: blur(var(--glass-blur));
     border: 1px solid rgba(255, 192, 103, 0.35);
+    /* Keep golden border */
     box-shadow: var(--glass-shadow);
+    color: var(--color-secondary);
+    pointer-events: none;
+}
+
+.feature-card--dark .feature-card__icon {
+    color: var(--color-secondary);
+    background: rgba(1, 3, 2, 0.3);
+    border-color: rgba(255, 192, 103, 0.35);
 }

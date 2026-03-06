@@ -12,6 +12,7 @@ description: Instructions for building and maintaining the @banhandmi mobile-fir
 | Framework   | React 19 + TypeScript          |
 | Build tool  | Vite 6                         |
 | Styling     | Vanilla CSS (custom properties)|
+| Icons       | lucide-react (see Icons)       |
 | Fonts       | Google Fonts (see Typography)  |
 | Linting     | ESLint flat config + TS-ESLint |
 
@@ -79,8 +80,7 @@ Components live in `src/components/`. Each component has a co-located `.tsx` + `
 
 | Component        | Purpose                                           |
 |------------------|----------------------------------------------------|
-| `ProfileHeader`  | Avatar ring, handle, name, bio, share button       |
-| `StatsCounter`   | Golden glassmorphism treat counter with drag icon  |
+| `ProfileHeader`  | Photo/video avatar, handle, name, bio, share button, drag-to-feed treat counter |
 | `FeatureGrid`    | 2×2 bento grid of glass feature cards              |
 | `SocialLinks`    | Row of social media icons (TikTok, IG, YT, Threads)|
 | `TerminalPanel`  | Dark glass console with animated typing lines      |
@@ -90,7 +90,7 @@ Components live in `src/components/`. Each component has a co-located `.tsx` + `
 - **Mobile-first**: All layouts target a single-column 420px-max view. App is centered via flexbox on `#root`.
 - **BEM naming**: CSS classes use `block__element--modifier` pattern, e.g. `feature-card__icon`, `feature-card--golden`.
 - **No CSS frameworks**: All styles are vanilla CSS using custom properties from `index.css`.
-- **SVG icons**: Inline SVGs for all icons — no icon library dependency.
+- **Icons**: Use `lucide-react` for all standard icons (`import { IconName } from 'lucide-react'`). Only use inline SVGs for brand icons not available in lucide (e.g. TikTok, Threads).
 - **Animations**: Use CSS `@keyframes` and `transition` for micro-animations. Keep durations 0.2–0.5s.
 - **Accessibility**: All interactive elements must have `aria-label`. Use semantic HTML (`header`, `nav`, `section`).
 
