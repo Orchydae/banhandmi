@@ -35,12 +35,14 @@ export default function ProfileHeader({ onFeed }: ProfileHeaderProps) {
 
         const rect = el.getBoundingClientRect()
         const clone = el.cloneNode(true) as HTMLElement
+        const cloneW = rect.width * 2
+        const cloneH = rect.height * 2
         clone.style.cssText = `
             position: fixed;
-            width: ${rect.width}px;
-            height: ${rect.height}px;
-            top: ${e.clientY - rect.height / 2}px;
-            left: ${e.clientX - rect.width / 2}px;
+            width: ${cloneW}px;
+            height: ${cloneH}px;
+            top: ${e.clientY - cloneH / 2}px;
+            left: ${e.clientX - cloneW / 2}px;
             opacity: 1;
             pointer-events: none;
             z-index: 9999;
