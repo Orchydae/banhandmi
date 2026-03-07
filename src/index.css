@@ -19,7 +19,6 @@
 
   --color-text: var(--color-dark);
   --color-text-secondary: #6B6B6B;
-  --color-text-light: #999999;
 
   /* --- Glass --- */
   --glass-bg: rgba(253, 251, 212, 0.3);
@@ -95,22 +94,6 @@ body {
 /* === Glass Utility === */
 .glass {
   background: var(--glass-bg);
-  backdrop-filter: blur(var(--glass-blur));
-  -webkit-backdrop-filter: blur(var(--glass-blur));
-  border: 1px solid var(--glass-border);
-  box-shadow: var(--glass-shadow);
-}
-
-.glass-strong {
-  background: var(--glass-bg-strong);
-  backdrop-filter: blur(var(--glass-blur));
-  -webkit-backdrop-filter: blur(var(--glass-blur));
-  border: 1px solid var(--glass-border);
-  box-shadow: var(--glass-shadow);
-}
-
-.glass--on-bg {
-  background: var(--glass-on-bg);
   backdrop-filter: blur(var(--glass-blur));
   -webkit-backdrop-filter: blur(var(--glass-blur));
   border: 1px solid var(--glass-border);

@@ -166,7 +166,6 @@
     border-radius: 20px 20px 0 0;
     z-index: 10;
     cursor: pointer;
-    box-sizing: content-box;
 }
 
 .hunger-meter::after {

@@ -22,7 +22,7 @@ export default function SocialLinks() {
             </a>
 
             {/* Email */}
-            <a className="social-links__item" href="#" aria-label="Email" target="_blank" rel="noopener noreferrer">
+            <a className="social-links__item" href="mailto:banhandmi@outlook.com" aria-label="Email" target="_blank" rel="noopener noreferrer">
                 <Mail size={24} />
             </a>
         </nav>
