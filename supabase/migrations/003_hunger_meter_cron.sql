@@ -31,10 +31,10 @@ BEGIN
 END;
 $$;
 
--- 4. Schedule hourly hunger decay (decrements by 1 every hour, clamped at 0)
+-- 4. Schedule half-hourly hunger decay (decrements by 1 every 30 minutes, clamped at 0)
 -- Run this in the Supabase SQL Editor:
 SELECT cron.schedule(
     'hunger_meter_decay',
-    '0 * * * *',
+    '*/30 * * * *',
     $$SELECT increment_counter('hunger_meter', -1)$$
 );
