@@ -8,6 +8,7 @@ import './CategoryPage.css'
 
 interface CategoryConfig {
     title: string
+    subtitle: string
     icon: React.ReactNode
     layout: 'grid' | 'list'
 }
@@ -15,16 +16,19 @@ interface CategoryConfig {
 const CATEGORY_CONFIG: Record<ItemCategory, CategoryConfig> = {
     dream_artifact: {
         title: 'Dream Artifacts',
+        subtitle: 'A curated collection of premium toys and engaging accessories.',
         icon: <Sparkles size={20} />,
         layout: 'grid',
     },
     favorite_treat: {
         title: 'Favorite Treats',
+        subtitle: 'High-quality treats offering optimal nutrition and exceptional taste.',
         icon: <Heart size={20} />,
         layout: 'grid',
     },
     disapproved_item: {
         title: 'Disapproved Items',
+        subtitle: 'Products that do not meet our quality standards.',
         icon: <ThumbsDown size={20} />,
         layout: 'list',
     },
@@ -50,9 +54,12 @@ export default function CategoryPage({ category }: CategoryPageProps) {
                 >
                     <ArrowLeft size={20} />
                 </button>
-                <div className="category-page__heading">
-                    <span className="category-page__icon">{config.icon}</span>
-                    <h1 className="category-page__title">{config.title}</h1>
+                <div className="category-page__title-group">
+                    <div className="category-page__heading">
+                        <span className="category-page__icon">{config.icon}</span>
+                        <h1 className="category-page__title">{config.title}</h1>
+                    </div>
+                    <p className="category-page__subtitle">{config.subtitle}</p>
                 </div>
             </header>
 
