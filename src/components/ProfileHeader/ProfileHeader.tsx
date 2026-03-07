@@ -56,6 +56,7 @@ export default function ProfileHeader({ onFeed }: ProfileHeaderProps) {
     }, [])
 
     const handlePointerMove = useCallback((e: PointerEvent) => {
+        e.preventDefault()
         if (!floatingCloneRef.current) return
         const clone = floatingCloneRef.current
         const w = parseFloat(clone.style.width)
@@ -101,7 +102,7 @@ export default function ProfileHeader({ onFeed }: ProfileHeaderProps) {
 
     useEffect(() => {
         if (isDragging) {
-            document.addEventListener('pointermove', handlePointerMove)
+            document.addEventListener('pointermove', handlePointerMove, { passive: false })
             document.addEventListener('pointerup', handlePointerUp)
         }
         return () => {

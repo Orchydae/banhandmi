@@ -1,6 +1,5 @@
 import './TerminalPanel.css'
 import { SquareChevronRight } from 'lucide-react'
-import { useEffect, useRef } from 'react'
 
 export interface LogEntry {
     id: string;
@@ -14,12 +13,6 @@ interface TerminalPanelProps {
 }
 
 export default function TerminalPanel({ logs }: TerminalPanelProps) {
-    const endOfMessagesRef = useRef<HTMLDivElement>(null);
-
-    useEffect(() => {
-        endOfMessagesRef.current?.scrollIntoView({ behavior: 'smooth' });
-    }, [logs]);
-
     return (
         <div className="terminal-panel" id="terminal-panel">
             <div className="terminal-panel__header">
@@ -34,7 +27,6 @@ export default function TerminalPanel({ logs }: TerminalPanelProps) {
                         {log.message}
                     </span>
                 ))}
-                <div ref={endOfMessagesRef} />
             </div>
         </div>
     )
