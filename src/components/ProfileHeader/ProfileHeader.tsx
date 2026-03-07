@@ -1,6 +1,7 @@
 import { useRef, useEffect, useCallback, useState } from 'react'
-import { Link, Cookie } from 'lucide-react'
+import { Share2, Cookie, Facebook, Copy, Check, X as XIcon, MessageCircle, Send } from 'lucide-react'
 import { useTreatsCounter } from '../../hooks/useTreatsCounter'
+import { useHungerMeter } from '../../hooks/useHungerMeter'
 import './ProfileHeader.css'
 
 interface ProfileHeaderProps {
@@ -9,8 +10,16 @@ interface ProfileHeaderProps {
 
 export default function ProfileHeader({ onFeed }: ProfileHeaderProps) {
     const { treats, increment } = useTreatsCounter()
+    const { hunger, feed } = useHungerMeter()
+
+    // Compute hunger bar color: green → yellow → red
+    const hungerColor = hunger > 50
+        ? `hsl(${120 * (hunger - 50) / 50}, 85%, 45%)`   // green → yellow
+        : `hsl(${120 * hunger / 50}, 85%, 45%)`            // yellow → red
     const [isPlaying, setIsPlaying] = useState(false)
     const [isDragging, setIsDragging] = useState(false)
+    const [shareOpen, setShareOpen] = useState(false)
+    const shareMenuRef = useRef<HTMLDivElement>(null)
     const videoRef = useRef<HTMLVideoElement>(null)
     const audioRef = useRef<HTMLAudioElement>(null)
     const dragIconRef = useRef<HTMLDivElement>(null)
@@ -64,6 +73,7 @@ export default function ProfileHeader({ onFeed }: ProfileHeaderProps) {
                 e.clientY <= rect.bottom
             if (over) {
                 increment()
+                feed()
                 onFeed?.()
                 setIsPlaying(true)
                 if (videoRef.current) {
@@ -104,7 +114,9 @@ export default function ProfileHeader({ onFeed }: ProfileHeaderProps) {
 
     const [copied, setCopied] = useState(false)
 
-    const handleShare = async () => {
+    const toggleShareMenu = () => setShareOpen(prev => !prev)
+
+    const handleCopyLink = async () => {
         try {
             await navigator.clipboard.writeText(window.location.href)
             setCopied(true)
@@ -114,19 +126,86 @@ export default function ProfileHeader({ onFeed }: ProfileHeaderProps) {
         }
     }
 
+    const pageUrl = encodeURIComponent(window.location.href)
+    const pageTitle = encodeURIComponent('Check out Bánh the Shiba Inu!')
+
+    const shareLinks = [
+        { label: 'Facebook', icon: <Facebook size={18} />, url: `https://www.facebook.com/sharer/sharer.php?u=${pageUrl}` },
+        { label: 'X', icon: <XIcon size={18} />, url: `https://x.com/intent/tweet?url=${pageUrl}&text=${pageTitle}` },
+        { label: 'Reddit', icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="14" r="8" /><circle cx="9" cy="13" r="1" fill="currentColor" /><circle cx="15" cy="13" r="1" fill="currentColor" /><path d="M9.5 17c1.1.8 2.5 1 3.5.5" /><path d="M20 6c0-1.1-.9-2-2-2s-2 .9-2 2" /><line x1="17" y1="6" x2="20" y2="2" /></svg>, url: `https://www.reddit.com/submit?url=${pageUrl}&title=${pageTitle}` },
+        { label: 'WhatsApp', icon: <MessageCircle size={18} />, url: `https://wa.me/?text=${pageTitle}%20${pageUrl}` },
+        { label: 'Telegram', icon: <Send size={18} />, url: `https://t.me/share/url?url=${pageUrl}&text=${pageTitle}` },
+        { label: 'TikTok', icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5" /></svg>, url: `https://www.tiktok.com/` },
+    ]
+
+    // Close share menu on outside click
+    useEffect(() => {
+        if (!shareOpen) return
+        const handleClickOutside = (e: MouseEvent) => {
+            if (shareMenuRef.current && !shareMenuRef.current.contains(e.target as Node)) {
+                setShareOpen(false)
+            }
+        }
+        document.addEventListener('mousedown', handleClickOutside)
+        return () => document.removeEventListener('mousedown', handleClickOutside)
+    }, [shareOpen])
+
     const formattedTreats = treats.toString().padStart(9, '0').replace(/(\d{3})(?=\d)/g, '$1 ')
 
     return (
         <header className="profile-header" id="profile-header">
             <div className="profile-header__top-bar">
                 <span className="profile-header__handle">@banhandmi</span>
-                <button className="profile-header__share-btn" aria-label="Copy link" onClick={handleShare}>
-                    <Link size={20} />
-                    {copied && <span className="profile-header__copied-tooltip">Link Copied!</span>}
-                </button>
+                <div className="profile-header__share-wrapper" ref={shareMenuRef}>
+                    <button className="profile-header__share-btn" aria-label="Share" onClick={toggleShareMenu}>
+                        <Share2 size={20} />
+                    </button>
+                    {shareOpen && (
+                        <div className="profile-header__share-menu glass">
+                            <span className="profile-header__share-menu-title">Share via</span>
+                            <div className="profile-header__share-grid">
+                                {shareLinks.map(link => (
+                                    <a
+                                        key={link.label}
+                                        href={link.url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="profile-header__share-item"
+                                        onClick={() => setShareOpen(false)}
+                                    >
+                                        <span className="profile-header__share-icon">{link.icon}</span>
+                                        <span className="profile-header__share-label">{link.label}</span>
+                                    </a>
+                                ))}
+                                <button
+                                    className="profile-header__share-item profile-header__share-item--copy"
+                                    onClick={handleCopyLink}
+                                >
+                                    <span className="profile-header__share-icon">
+                                        {copied ? <Check size={18} /> : <Copy size={18} />}
+                                    </span>
+                                    <span className="profile-header__share-label">
+                                        {copied ? 'Copied!' : 'Copy Link'}
+                                    </span>
+                                </button>
+                            </div>
+                        </div>
+                    )}
+                </div>
             </div>
 
             <div ref={avatarRingRef} className="profile-header__avatar-ring">
+                <div
+                    className="hunger-meter"
+                    aria-label="Hunger meter"
+                    data-tooltip={`Hunger meter: ${hunger}/100`}
+                    tabIndex={0}
+                >
+                    <div
+                        className="hunger-meter__fill"
+                        style={{ width: `${hunger}%`, backgroundColor: hungerColor }}
+                    />
+                </div>
                 <img
                     className={`profile-header__avatar profile-header__avatar--photo ${isPlaying ? 'profile-header__avatar--hidden' : ''}`}
                     src={isDragging ? '/banhondrag.png' : '/webphoto.jpg'}
