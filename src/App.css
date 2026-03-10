@@ -9,8 +9,8 @@
   gap: var(--spacing-lg);
 }
 
-/* Center column wrapper (FeatureGrid + SocialLinks) */
-.app__center-col {
+/* Right column wrapper (FeatureGrid + SocialLinks + TerminalPanel) */
+.app__right-col {
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -19,16 +19,15 @@
 }
 
 /* ===========================
-   Desktop 3-column layout
+   Desktop 2-column layout
    =========================== */
 @media (min-width: 1024px) {
   .app {
     max-width: 1200px;
     display: grid;
-    grid-template-columns: 300px 1fr 1fr;
-    align-items: center;
+    grid-template-columns: 6fr 4fr;
+    align-items: start;
     gap: var(--spacing-xl);
     padding: var(--spacing-xl) var(--spacing-xl);
   }
-
 }

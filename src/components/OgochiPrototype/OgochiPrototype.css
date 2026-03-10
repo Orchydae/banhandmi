@@ -44,14 +44,90 @@
     box-shadow: 0 0 6px 1px currentColor;
 }
 
-.ogochi-prototype {
+.ogochi-prototype__eggshell {
     width: 100%;
-    height: 350px;
-    border-radius: 24px;
-    padding: 4px;
+    max-width: 650px;
+    min-height: 600px;
+    max-height: 700px;
+    border-radius: 45% 45% 25% 25%;
+    padding: 50px;
+    background: linear-gradient(135deg, var(--color-secondary) 0%, darkorange 100%);
+    box-shadow:
+        inset -10px -10px 20px rgba(0, 0, 0, 0.1),
+        0 10px 20px rgba(0, 0, 0, 0.2);
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    flex: 1;
+}
+
+.ogochi-prototype__crack {
+    width: 100%;
+    height: 85%;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 30px;
     margin-top: var(--spacing-sm);
     position: relative;
+    z-index: 1;
+}
+
+.ogochi-prototype__crack::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(135deg, rgb(202, 138, 60) 0%, var(--color-secondary) 100%);
+    clip-path: polygon(0 44%, 4% 4%, 29% 4%, 43% 0%, 70% 6%, 84% 0, 100% 14%,
+            98% 31%, 100% 58%, 98% 79%, 93% 94%, 73% 97%, 57% 100%, 35% 96%,
+            19% 100%, 2% 91%, 3% 75%);
+    transform: scale(1.03);
+    z-index: -2;
+}
+
+.ogochi-prototype__crack::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(135deg, var(--color-secondary) 0%, var(--color-primary-dark) 100%);
+    clip-path: polygon(0 44%, 4% 4%, 29% 4%, 43% 0%, 70% 6%, 84% 0, 100% 14%,
+            98% 31%, 100% 58%, 98% 79%, 93% 94%, 73% 97%, 57% 100%, 35% 96%,
+            19% 100%, 2% 91%, 3% 75%);
+    z-index: -1;
+    filter: drop-shadow(-4px -4px 0px rgba(255, 255, 255, 0.6));
+}
+
+.ogochi-prototype {
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    border-radius: 50px;
+    position: relative;
     overflow: hidden;
+    background-color: #e5e5e5;
+    background: linear-gradient(#e5e5e5, #e5e5e5) padding-box,
+        linear-gradient(135deg, rgb(202, 138, 60) 0%, var(--color-secondary) 100%) border-box;
+    border: 7px solid transparent;
+}
+
+.ogochi-prototype::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: inherit;
+    /* Automatically copies the 50px border-radius */
+    box-shadow: inset 5px 5px 50px rgba(0, 0, 0, 0.4);
+    /* Adjust for desired depth */
+    pointer-events: none;
+    /* Crucial: allows clicks to pass through to the image/video */
+    z-index: 10;
+    /* Ensures the shadow sits above the avatar and video */
 }
 
 .ogochi-prototype__avatar {

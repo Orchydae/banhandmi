@@ -51,32 +51,36 @@ const OgochiPrototype = forwardRef<OgochiPrototypeRef, OgochiPrototypeProps>(({ 
     };
 
     return (
-        <div ref={avatarRingRef} className="ogochi-prototype">
-            <div
-                className="hunger-meter"
-                aria-label="Hunger meter"
-                data-tooltip={`Hunger meter: ${hunger}/100`}
-                tabIndex={0}
-            >
-                <div
-                    className="hunger-meter__fill"
-                    style={{ width: `${hunger}%`, backgroundColor: hungerColor }}
-                />
+        <div className="ogochi-prototype__eggshell">
+            <div className="ogochi-prototype__crack">
+                <div ref={avatarRingRef} className="ogochi-prototype">
+                    <div
+                        className="hunger-meter"
+                        aria-label="Hunger meter"
+                        data-tooltip={`Hunger meter: ${hunger}/100`}
+                        tabIndex={0}
+                    >
+                        <div
+                            className="hunger-meter__fill"
+                            style={{ width: `${hunger}%`, backgroundColor: hungerColor }}
+                        />
+                    </div>
+                    <img
+                        className={`ogochi-prototype__avatar ogochi-prototype__avatar--photo ${isPlaying ? 'ogochi-prototype__avatar--hidden' : ''}`}
+                        src={isDragging ? '/banhondrag.png' : '/webphoto.jpg'}
+                        alt="Bánh the Shiba Inu"
+                    />
+                    <video
+                        ref={videoRef}
+                        className={`ogochi-prototype__avatar ogochi-prototype__avatar--video ${isPlaying ? 'ogochi-prototype__avatar--visible' : ''}`}
+                        src="/banh-eating.mp4"
+                        muted
+                        playsInline
+                        onEnded={handleVideoEnded}
+                    />
+                    <audio ref={audioRef} src="/minecraft-eating.mp3" preload="auto" />
+                </div>
             </div>
-            <img
-                className={`ogochi-prototype__avatar ogochi-prototype__avatar--photo ${isPlaying ? 'ogochi-prototype__avatar--hidden' : ''}`}
-                src={isDragging ? '/banhondrag.png' : '/webphoto.jpg'}
-                alt="Bánh the Shiba Inu"
-            />
-            <video
-                ref={videoRef}
-                className={`ogochi-prototype__avatar ogochi-prototype__avatar--video ${isPlaying ? 'ogochi-prototype__avatar--visible' : ''}`}
-                src="/banh-eating.mp4"
-                muted
-                playsInline
-                onEnded={handleVideoEnded}
-            />
-            <audio ref={audioRef} src="/minecraft-eating.mp3" preload="auto" />
         </div>
     );
 });

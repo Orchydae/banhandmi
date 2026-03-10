@@ -34,11 +34,11 @@ function App() {
                 element={
                     <div className="app">
                         <ProfileHeader onFeed={handleFeed} />
-                        <div className="app__center-col">
+                        <div className="app__right-col">
                             <FeatureGrid onFeatureClick={handleFeatureClick} />
                             <SocialLinks />
+                            <TerminalPanel logs={logs} />
                         </div>
-                        <TerminalPanel logs={logs} />
                     </div>
                 }
             />

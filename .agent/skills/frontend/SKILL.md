@@ -101,7 +101,7 @@ Each component has a co-located `.tsx` + `.css` pair.
 
 ## Conventions
 
-- **Mobile-first**: All layouts target a single-column 420px-max view. App is centered via flexbox on `#root`.
+- **Mobile-first**: All layouts target a single-column 420px-max view. App is centered via flexbox on `#root`. On desktop (`min-width: 1024px`), it uses a 2-column layout (`grid-template-columns: 7fr 3fr`).
 - **BEM naming**: CSS classes use `block__element--modifier` pattern, e.g. `feature-card__icon`, `feature-card--golden`.
 - **No CSS frameworks**: All styles are vanilla CSS using custom properties from `index.css`.
 - **Icons**: Use `lucide-react` for standard icons. Use inline SVGs only for brand icons (e.g., TikTok, Threads) missing from lucide.
