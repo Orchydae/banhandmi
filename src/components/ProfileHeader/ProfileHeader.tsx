@@ -1,7 +1,7 @@
 import { useRef, useEffect, useCallback, useState } from 'react'
 import { Share2, Cookie, Facebook, Copy, Check, X as XIcon, MessageCircle, Send } from 'lucide-react'
 import { useTreatsCounter } from '../../hooks/useTreatsCounter'
-import { useHungerMeter } from '../../hooks/useHungerMeter'
+import OgochiPrototype, { OgochiPrototypeRef } from '../OgochiPrototype/OgochiPrototype'
 import './ProfileHeader.css'
 
 interface ProfileHeaderProps {
@@ -10,20 +10,11 @@ interface ProfileHeaderProps {
 
 export default function ProfileHeader({ onFeed }: ProfileHeaderProps) {
     const { treats, increment } = useTreatsCounter()
-    const { hunger, feed } = useHungerMeter()
-
-    // Compute hunger bar color: green → yellow → red
-    const hungerColor = hunger > 50
-        ? `hsl(${120 * (hunger - 50) / 50}, 85%, 45%)`   // green → yellow
-        : `hsl(${120 * hunger / 50}, 85%, 45%)`            // yellow → red
-    const [isPlaying, setIsPlaying] = useState(false)
     const [isDragging, setIsDragging] = useState(false)
     const [shareOpen, setShareOpen] = useState(false)
     const shareMenuRef = useRef<HTMLDivElement>(null)
-    const videoRef = useRef<HTMLVideoElement>(null)
-    const audioRef = useRef<HTMLAudioElement>(null)
     const dragIconRef = useRef<HTMLDivElement>(null)
-    const avatarRingRef = useRef<HTMLDivElement>(null)
+    const ogochiRef = useRef<OgochiPrototypeRef>(null)
     const floatingCloneRef = useRef<HTMLElement | null>(null)
 
     const handlePointerDown = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
@@ -67,8 +58,8 @@ export default function ProfileHeader({ onFeed }: ProfileHeaderProps) {
 
     const handlePointerUp = useCallback((e: PointerEvent) => {
         // Check if released over the avatar ring
-        if (avatarRingRef.current && videoRef.current) {
-            const rect = avatarRingRef.current.getBoundingClientRect()
+        if (ogochiRef.current) {
+            const rect = ogochiRef.current.getBoundingClientRect()
             const over =
                 e.clientX >= rect.left &&
                 e.clientX <= rect.right &&
@@ -76,19 +67,8 @@ export default function ProfileHeader({ onFeed }: ProfileHeaderProps) {
                 e.clientY <= rect.bottom
             if (over) {
                 increment()
-                feed()
+                ogochiRef.current.triggerFeed()
                 onFeed?.()
-                setIsPlaying(true)
-                if (videoRef.current) {
-                    videoRef.current.currentTime = 0
-                    videoRef.current.play().catch(() => { })
-                }
-                setTimeout(() => {
-                    if (audioRef.current) {
-                        audioRef.current.currentTime = 0
-                        audioRef.current.play().catch(() => { })
-                    }
-                }, 1000)
             }
         }
         // Clean up
@@ -110,10 +90,6 @@ export default function ProfileHeader({ onFeed }: ProfileHeaderProps) {
             document.removeEventListener('pointerup', handlePointerUp)
         }
     }, [isDragging, handlePointerMove, handlePointerUp])
-
-    const handleVideoEnded = () => {
-        setIsPlaying(false)
-    }
 
     const [copied, setCopied] = useState(false)
 
@@ -197,33 +173,7 @@ export default function ProfileHeader({ onFeed }: ProfileHeaderProps) {
                 </div>
             </div>
 
-            <div ref={avatarRingRef} className="profile-header__avatar-ring">
-                <div
-                    className="hunger-meter"
-                    aria-label="Hunger meter"
-                    data-tooltip={`Hunger meter: ${hunger}/100`}
-                    tabIndex={0}
-                >
-                    <div
-                        className="hunger-meter__fill"
-                        style={{ width: `${hunger}%`, backgroundColor: hungerColor }}
-                    />
-                </div>
-                <img
-                    className={`profile-header__avatar profile-header__avatar--photo ${isPlaying ? 'profile-header__avatar--hidden' : ''}`}
-                    src={isDragging ? '/banhondrag.png' : '/webphoto.jpg'}
-                    alt="Bánh the Shiba Inu"
-                />
-                <video
-                    ref={videoRef}
-                    className={`profile-header__avatar profile-header__avatar--video ${isPlaying ? 'profile-header__avatar--visible' : ''}`}
-                    src="/banh-eating.mp4"
-                    muted
-                    playsInline
-                    onEnded={handleVideoEnded}
-                />
-                <audio ref={audioRef} src="/minecraft-eating.mp3" preload="auto" />
-            </div>
+            <OgochiPrototype ref={ogochiRef} isDragging={isDragging} />
 
             <h1 className="profile-header__name">Bánh</h1>
             <p className="profile-header__bio">A Shiba Inu that reinvents reality and dreams.</p>
