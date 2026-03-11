@@ -1,7 +1,7 @@
 import { useRef, useEffect, useCallback, useState } from 'react'
 import { Share2, Cookie, Facebook, Copy, Check, X as XIcon, MessageCircle, Send } from 'lucide-react'
 import { useTreatsCounter } from '../../hooks/useTreatsCounter'
-import OgochiPrototype, { OgochiPrototypeRef } from '../OgochiPrototype/OgochiPrototype'
+import OgotchiPrototype, { OgotchiPrototypeRef } from '../OgotchiPrototype/OgotchiPrototype'
 import './ProfileHeader.css'
 
 interface ProfileHeaderProps {
@@ -14,7 +14,7 @@ export default function ProfileHeader({ onFeed }: ProfileHeaderProps) {
     const [shareOpen, setShareOpen] = useState(false)
     const shareMenuRef = useRef<HTMLDivElement>(null)
     const dragIconRef = useRef<HTMLDivElement>(null)
-    const ogochiRef = useRef<OgochiPrototypeRef>(null)
+    const ogotchiRef = useRef<OgotchiPrototypeRef>(null)
     const floatingCloneRef = useRef<HTMLElement | null>(null)
 
     const handlePointerDown = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
@@ -58,8 +58,8 @@ export default function ProfileHeader({ onFeed }: ProfileHeaderProps) {
 
     const handlePointerUp = useCallback((e: PointerEvent) => {
         // Check if released over the avatar ring
-        if (ogochiRef.current) {
-            const rect = ogochiRef.current.getBoundingClientRect()
+        if (ogotchiRef.current) {
+            const rect = ogotchiRef.current.getBoundingClientRect()
             const over =
                 e.clientX >= rect.left &&
                 e.clientX <= rect.right &&
@@ -67,7 +67,7 @@ export default function ProfileHeader({ onFeed }: ProfileHeaderProps) {
                 e.clientY <= rect.bottom
             if (over) {
                 increment()
-                ogochiRef.current.triggerFeed()
+                ogotchiRef.current.triggerFeed()
                 onFeed?.()
             }
         }
@@ -173,9 +173,8 @@ export default function ProfileHeader({ onFeed }: ProfileHeaderProps) {
                 </div>
             </div>
 
-            <OgochiPrototype ref={ogochiRef} isDragging={isDragging} />
+            <OgotchiPrototype ref={ogotchiRef} isDragging={isDragging} />
 
-            <h1 className="profile-header__name">Bánh</h1>
             <p className="profile-header__bio">A Shiba Inu that reinvents reality and dreams.</p>
 
             <div className="stats-container">

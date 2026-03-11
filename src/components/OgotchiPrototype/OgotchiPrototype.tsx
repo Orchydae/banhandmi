@@ -1,17 +1,17 @@
 import { forwardRef, useRef, useImperativeHandle, useState } from 'react';
 import { useHungerMeter } from '../../hooks/useHungerMeter';
-import './OgochiPrototype.css';
+import './OgotchiPrototype.css';
 
-export interface OgochiPrototypeRef {
+export interface OgotchiPrototypeRef {
     getBoundingClientRect: () => DOMRect;
     triggerFeed: () => void;
 }
 
-interface OgochiPrototypeProps {
+interface OgotchiPrototypeProps {
     isDragging: boolean;
 }
 
-const OgochiPrototype = forwardRef<OgochiPrototypeRef, OgochiPrototypeProps>(({ isDragging }, ref) => {
+const OgotchiPrototype = forwardRef<OgotchiPrototypeRef, OgotchiPrototypeProps>(({ isDragging }, ref) => {
     const { hunger, feed } = useHungerMeter();
     const [isPlaying, setIsPlaying] = useState(false);
 
@@ -51,9 +51,14 @@ const OgochiPrototype = forwardRef<OgochiPrototypeRef, OgochiPrototypeProps>(({ 
     };
 
     return (
-        <div className="ogochi-prototype__eggshell">
-            <div className="ogochi-prototype__crack">
-                <div ref={avatarRingRef} className="ogochi-prototype">
+        <div className="ogotchi-prototype__eggshell">
+            <div className="ogotchi-prototype__keychain-holder">
+                <div className="keychain-holder-hollow">
+                </div>
+            </div>
+            <div className="ogotchi-prototype__name">Bánh-ogotchi</div>
+            <div className="ogotchi-prototype__crack">
+                <div ref={avatarRingRef} className="ogotchi-prototype">
                     <div
                         className="hunger-meter"
                         aria-label="Hunger meter"
@@ -66,13 +71,13 @@ const OgochiPrototype = forwardRef<OgochiPrototypeRef, OgochiPrototypeProps>(({ 
                         />
                     </div>
                     <img
-                        className={`ogochi-prototype__avatar ogochi-prototype__avatar--photo ${isPlaying ? 'ogochi-prototype__avatar--hidden' : ''}`}
+                        className={`ogotchi-prototype__avatar ogotchi-prototype__avatar--photo ${isPlaying ? 'ogotchi-prototype__avatar--hidden' : ''}`}
                         src={isDragging ? '/banhondrag.png' : '/webphoto.jpg'}
                         alt="Bánh the Shiba Inu"
                     />
                     <video
                         ref={videoRef}
-                        className={`ogochi-prototype__avatar ogochi-prototype__avatar--video ${isPlaying ? 'ogochi-prototype__avatar--visible' : ''}`}
+                        className={`ogotchi-prototype__avatar ogotchi-prototype__avatar--video ${isPlaying ? 'ogotchi-prototype__avatar--visible' : ''}`}
                         src="/banh-eating.mp4"
                         muted
                         playsInline
@@ -81,10 +86,33 @@ const OgochiPrototype = forwardRef<OgochiPrototypeRef, OgochiPrototypeProps>(({ 
                     <audio ref={audioRef} src="/minecraft-eating.mp3" preload="auto" />
                 </div>
             </div>
+            <div className="ogotchi-prototype__buttons">
+                <button>
+                    <div className="button-outer">
+                        <div className="button-inner">
+
+                        </div>
+                    </div>
+                </button>
+                <button>
+                    <div className="button-outer">
+                        <div className="button-inner">
+
+                        </div>
+                    </div>
+                </button>
+                <button>
+                    <div className="button-outer">
+                        <div className="button-inner">
+
+                        </div>
+                    </div>
+                </button>
+            </div>
         </div>
     );
 });
 
-OgochiPrototype.displayName = 'OgochiPrototype';
+OgotchiPrototype.displayName = 'OgotchiPrototype';
 
-export default OgochiPrototype;
+export default OgotchiPrototype;
