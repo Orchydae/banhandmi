@@ -67,7 +67,7 @@ export default function ProfileHeader({ onFeed }: ProfileHeaderProps) {
                 e.clientY <= rect.bottom
             if (over) {
                 increment()
-                ogotchiRef.current.triggerFeed()
+                ogotchiRef.current.triggerFeed(e.clientX, e.clientY)
                 onFeed?.()
             }
         }
@@ -78,7 +78,7 @@ export default function ProfileHeader({ onFeed }: ProfileHeaderProps) {
         }
         document.body.style.cursor = ''
         setIsDragging(false)
-    }, [])
+    }, [increment, onFeed])
 
     useEffect(() => {
         if (isDragging) {

@@ -8,7 +8,7 @@ interface UseHungerMeterResult {
 }
 
 export function useHungerMeter(): UseHungerMeterResult {
-    const [hunger, setHunger] = useState(100)
+    const [hunger, setHunger] = useState(0)
     const [loading, setLoading] = useState(true)
 
     // Fetch current value on mount
@@ -16,7 +16,7 @@ export function useHungerMeter(): UseHungerMeterResult {
         async function fetchHunger() {
             const supabase = getSupabase()
             if (!supabase) {
-                setHunger(100)
+                setHunger(0)
                 setLoading(false)
                 return
             }
