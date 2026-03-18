@@ -1,4 +1,4 @@
-import { Instagram, Youtube, Mail } from 'lucide-react'
+import { Instagram, Youtube, Mail, Facebook } from 'lucide-react'
 import './SocialLinks.css'
 
 export default function SocialLinks() {
@@ -18,7 +18,12 @@ export default function SocialLinks() {
 
             {/* YouTube */}
             <a className="social-links__item" href="https://www.youtube.com/@banhandmi" aria-label="YouTube" target="_blank" rel="noopener noreferrer">
-                <Youtube size={24} />
+                <Youtube size={28} />
+            </a>
+
+            {/* Facebook */}
+            <a className="social-links__item" href="https://www.facebook.com/profile.php?id=61579468980213" aria-label="Facebook" target="_blank" rel="noopener noreferrer">
+                <Facebook size={24} />
             </a>
 
             {/* Email */}
