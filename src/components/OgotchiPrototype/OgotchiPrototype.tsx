@@ -6,6 +6,7 @@ import { useDogProfile } from '../../hooks/useDogProfile';
 import { WeightGraph } from './WeightGraph';
 import { OgotchiButtons, OgotchiAction } from './OgotchiButtons';
 import { HealthMeters } from './HealthMeters';
+import { RotationVideo } from './RotationVideo';
 import './OgotchiPrototype.css';
 
 export interface OgotchiPrototypeRef {
@@ -35,6 +36,22 @@ const OgotchiPrototype = forwardRef<OgotchiPrototypeRef, OgotchiPrototypeProps>(
     const [newWeightValue, setNewWeightValue] = useState('');
     const [isSavingWeight, setIsSavingWeight] = useState(false);
     const [feedbacks, setFeedbacks] = useState<FloatingFeedback[]>([]);
+    const [mouseOnPage, setMouseOnPage] = useState(false);
+
+    useEffect(() => {
+        // Only track mouse presence on devices that have a fine pointer
+        if (!window.matchMedia('(pointer: fine)').matches) return;
+
+        const handleEnter = () => setMouseOnPage(true);
+        const handleLeave = () => setMouseOnPage(false);
+
+        document.documentElement.addEventListener('mouseenter', handleEnter);
+        document.documentElement.addEventListener('mouseleave', handleLeave);
+        return () => {
+            document.documentElement.removeEventListener('mouseenter', handleEnter);
+            document.documentElement.removeEventListener('mouseleave', handleLeave);
+        };
+    }, []);
 
     const holdTimeoutRef = useRef<NodeJS.Timeout | null>(null);
     const avatarRingRef = useRef<HTMLDivElement>(null);
@@ -47,6 +64,8 @@ const OgotchiPrototype = forwardRef<OgotchiPrototypeRef, OgotchiPrototypeProps>(
     const audioRef = useRef<HTMLAudioElement>(null);
     const coinAudioRef = useRef<HTMLAudioElement>(null);
     const rafRef = useRef<number | null>(null);
+
+    const showRotation = isDragging || mouseOnPage;
 
     const stopAllVideos = () => {
         const refs = [
@@ -284,10 +303,11 @@ const OgotchiPrototype = forwardRef<OgotchiPrototypeRef, OgotchiPrototypeProps>(
                 >
                     <HealthMeters hunger={hunger} mood={mood} />
                     <img
-                        className={`ogotchi-prototype__avatar ogotchi-prototype__avatar--photo ${playingState !== 'idle' ? 'ogotchi-prototype__avatar--hidden' : ''}`}
-                        src={isDragging ? '/banhondrag.png' : (hunger < 25 ? '/dead.png' : '/webphoto.jpg')}
+                        className={`ogotchi-prototype__avatar ogotchi-prototype__avatar--photo ${playingState !== 'idle' || showRotation ? 'ogotchi-prototype__avatar--hidden' : ''}`}
+                        src={hunger < 25 ? '/dead.png' : '/webphoto.jpg'}
                         alt="Bánh the Shiba Inu"
                     />
+                    <RotationVideo visible={showRotation && playingState === 'idle'} />
                     <video
                         ref={eatingVideoRef}
                         className={`ogotchi-prototype__avatar ogotchi-prototype__avatar--video ${playingState === 'eating' ? 'ogotchi-prototype__avatar--visible' : ''}`}

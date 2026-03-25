@@ -26,7 +26,6 @@
     max-width: 1200px;
     display: grid;
     grid-template-columns: 6fr 4fr;
-    align-items: start;
     gap: var(--spacing-xl);
     padding: var(--spacing-xl) var(--spacing-xl);
   }
