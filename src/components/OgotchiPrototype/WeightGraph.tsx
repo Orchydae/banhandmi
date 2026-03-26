@@ -30,7 +30,12 @@ const CustomTooltip = ({ active, payload, label }: { active?: boolean; payload?:
 };
 
 export const WeightGraph: React.FC<WeightGraphProps> = ({ data, onBack, onClose }) => {
-    if (!data || data.length === 0) {
+    const sortedData = React.useMemo(
+        () => [...data].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()),
+        [data]
+    );
+
+    if (!sortedData || sortedData.length === 0) {
         return (
             <div className="ogotchi-graph__container">
                 {onBack && <button className="ogotchi-graph__back" onClick={onBack}>&larr; Back</button>}
@@ -46,7 +51,7 @@ export const WeightGraph: React.FC<WeightGraphProps> = ({ data, onBack, onClose 
             <div className="ogotchi-graph__chart-wrapper">
                 <ResponsiveContainer width="100%" height="100%">
                     <AreaChart
-                        data={data}
+                        data={sortedData}
                         margin={{
                             top: 10,
                             right: 10,
