@@ -53,6 +53,21 @@
     color: var(--color-accent);
 }
 
+/* Donate card – full-width banner */
+.feature-card--donate {
+    grid-column: 1 / -1;
+    background: linear-gradient(135deg, rgba(255, 192, 103, 0.35), rgba(255, 133, 89, 0.25));
+    border: 1px solid rgba(255, 192, 103, 0.5);
+    color: var(--color-primary-dark);
+    font-family: inherit;
+}
+
+.feature-card--donate .feature-card__icon {
+    color: var(--color-primary-dark);
+    background: rgba(255, 133, 89, 0.15);
+    border-color: rgba(255, 133, 89, 0.35);
+}
+
 /* Dark accent card ( Upcoming ) */
 .feature-card--dark {
     background: rgba(1, 3, 2, 0.3);

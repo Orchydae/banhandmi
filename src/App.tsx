@@ -4,6 +4,7 @@ import ProfileHeader from './components/ProfileHeader/ProfileHeader'
 import FeatureGrid from './components/FeatureGrid/FeatureGrid'
 import SocialLinks from './components/SocialLinks/SocialLinks'
 import TerminalPanel from './components/TerminalPanel/TerminalPanel'
+import DonorMarquee from './components/DonorMarquee/DonorMarquee'
 import CategoryPage from './modules/CategoryPage/CategoryPage'
 import { useTerminalLogs } from './hooks/useTerminalLogs'
 
@@ -28,6 +29,8 @@ function App() {
     }
 
     return (
+        <>
+        <DonorMarquee />
         <Routes>
             <Route
                 path="/"
@@ -55,6 +58,7 @@ function App() {
                 element={<CategoryPage category="disapproved_item" />}
             />
         </Routes>
+        </>
     )
 }
 
