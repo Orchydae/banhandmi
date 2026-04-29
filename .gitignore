@@ -32,3 +32,6 @@ pnpm-debug.log*
 
 # TypeScript cache
 *.tsbuildinfo
+
+# Supabase local state
+supabase/.temp/

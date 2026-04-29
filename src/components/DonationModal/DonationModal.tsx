@@ -1,7 +1,11 @@
 import { useRef, useState } from 'react'
 import { X, HeartHandshake } from 'lucide-react'
+import { loadStripe } from '@stripe/stripe-js'
+import { EmbeddedCheckout, EmbeddedCheckoutProvider } from '@stripe/react-stripe-js'
 import { getSupabase } from '../../lib/supabase'
 import './DonationModal.css'
+
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY ?? '')
 
 interface DonationModalProps {
     onClose: () => void
@@ -15,9 +19,13 @@ interface FormState {
 
 export default function DonationModal({ onClose }: DonationModalProps) {
     const AMOUNTS = [2, 5, 10, 25]
+    const [step, setStep] = useState<'form' | 'payment'>('form')
     const [form, setForm] = useState<FormState>({ donorName: '', message: '', amount: '10' })
     const [customAmount, setCustomAmount] = useState('')
     const [customFocused, setCustomFocused] = useState(false)
+    const [clientSecret, setClientSecret] = useState<string | null>(null)
+    const [status, setStatus] = useState<'idle' | 'loading' | 'error'>('idle')
+    const [errorMsg, setErrorMsg] = useState('')
     const customInputRef = useRef<HTMLInputElement>(null)
 
     const isCustomActive = customFocused || customAmount !== ''
@@ -31,8 +39,6 @@ export default function DonationModal({ onClose }: DonationModalProps) {
         setCustomAmount(e.target.value)
         setForm(prev => ({ ...prev, amount: e.target.value }))
     }
-    const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
-    const [errorMsg, setErrorMsg] = useState('')
 
     function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
         setForm(prev => ({ ...prev, [e.target.name]: e.target.value }))
@@ -44,129 +50,142 @@ export default function DonationModal({ onClose }: DonationModalProps) {
         setErrorMsg('')
 
         const amountCents = Math.round(parseFloat(form.amount) * 100)
-        if (isNaN(amountCents) || amountCents <= 0) {
-            setErrorMsg('Please enter a valid amount.')
+        if (isNaN(amountCents) || amountCents < 50) {
+            setErrorMsg('Minimum donation is $0.50.')
             setStatus('error')
             return
         }
 
         const supabase = getSupabase()
         if (!supabase) {
-            setErrorMsg('Supabase is not configured.')
+            setErrorMsg('Service not configured.')
             setStatus('error')
             return
         }
 
-        const { error } = await supabase.from('donations').insert({
-            stripe_payment_id: `test_${Date.now()}`,
-            donor_name: form.donorName.trim(),
-            message: form.message.trim() || null,
-            amount_cents: amountCents,
-        })
+        try {
+            const { data, error } = await supabase.functions.invoke('create-checkout-session', {
+                body: {
+                    amount_cents: amountCents,
+                    donor_name: form.donorName.trim(),
+                    message: form.message.trim() || null,
+                    return_url: `${window.location.origin}/donation-success`,
+                },
+            })
 
-        if (error) {
-            setErrorMsg(error.message)
+            if (error) throw new Error(error.message)
+            setClientSecret(data.clientSecret)
+            setStep('payment')
+        } catch (err: unknown) {
+            setErrorMsg(err instanceof Error ? err.message : 'Something went wrong.')
             setStatus('error')
-        } else {
-            setStatus('success')
+        } finally {
+            setStatus('idle')
         }
     }
 
     return (
-        <div className="donation-overlay" onClick={onClose}>
-            <div className="donation-modal glass" onClick={e => e.stopPropagation()}>
+        <div className="donation-overlay" onClick={step === 'form' ? onClose : undefined}>
+            <div
+                className={`donation-modal glass${step === 'payment' ? ' donation-modal--payment' : ''}`}
+                onClick={e => e.stopPropagation()}
+            >
                 <button className="donation-modal__close" onClick={onClose} aria-label="Close">
                     <X size={18} />
                 </button>
 
-                <div className="donation-modal__header">
-                    <div className="donation-modal__icon">
-                        <HeartHandshake size={22} />
-                    </div>
-                    <h2 className="donation-modal__title">Buy Bánh a Treat</h2>
-                    <span className="donation-modal__badge">TEST MODE</span>
-                </div>
-
-                {status === 'success' ? (
-                    <div className="donation-modal__success">
-                        <span className="donation-modal__success-emoji">🐾</span>
-                        <p>Donation recorded! Check your Supabase table.</p>
-                        <button className="donation-modal__btn" onClick={onClose}>Close</button>
-                    </div>
-                ) : (
-                    <form className="donation-modal__form" onSubmit={handleSubmit}>
-                        <label className="donation-modal__label">
-                            Your name
-                            <input
-                                className="donation-modal__input"
-                                type="text"
-                                name="donorName"
-                                value={form.donorName}
-                                onChange={handleChange}
-                                placeholder="e.g. Kind Hooman"
-                                required
-                            />
-                        </label>
-
-                        <div className="donation-modal__label">
-                            Amount (USD)
-                            <div className="donation-modal__amounts">
-                                {AMOUNTS.map(amt => (
-                                    <button
-                                        key={amt}
-                                        type="button"
-                                        className={`donation-modal__amount-btn${!isCustomActive && form.amount === String(amt) ? ' donation-modal__amount-btn--active' : ''}`}
-                                        onClick={() => selectPreset(amt)}
-                                    >
-                                        ${amt}
-                                    </button>
-                                ))}
-                                <button
-                                    type="button"
-                                    className={`donation-modal__amount-btn${isCustomActive ? ' donation-modal__amount-btn--active' : ''}`}
-                                    onClick={() => customInputRef.current?.focus()}
-                                >
-                                    Custom
-                                </button>
-                                <input
-                                    ref={customInputRef}
-                                    className="donation-modal__input donation-modal__custom-input"
-                                    type="number"
-                                    value={customAmount}
-                                    onChange={handleCustomChange}
-                                    onFocus={() => setCustomFocused(true)}
-                                    onBlur={() => setCustomFocused(false)}
-                                    placeholder="Enter amount…"
-                                    min="0.01"
-                                    step="0.01"
-                                />
+                {step === 'form' && (
+                    <>
+                        <div className="donation-modal__header">
+                            <div className="donation-modal__icon">
+                                <HeartHandshake size={22} />
                             </div>
+                            <h2 className="donation-modal__title">Buy Bánh a Treat</h2>
                         </div>
 
-                        <label className="donation-modal__label">
-                            Message <span className="donation-modal__optional">(optional)</span>
-                            <textarea
-                                className="donation-modal__input donation-modal__textarea"
-                                name="message"
-                                value={form.message}
-                                onChange={handleChange}
-                                placeholder="Leave Bánh a message…"
-                                rows={3}
-                            />
-                        </label>
+                        <form className="donation-modal__form" onSubmit={handleSubmit}>
+                            <label className="donation-modal__label">
+                                Your name
+                                <input
+                                    className="donation-modal__input"
+                                    type="text"
+                                    name="donorName"
+                                    value={form.donorName}
+                                    onChange={handleChange}
+                                    placeholder="e.g. Kind Hooman"
+                                    required
+                                />
+                            </label>
 
-                        {status === 'error' && (
-                            <p className="donation-modal__error">{errorMsg}</p>
-                        )}
+                            <div className="donation-modal__label">
+                                Amount (USD)
+                                <div className="donation-modal__amounts">
+                                    {AMOUNTS.map(amt => (
+                                        <button
+                                            key={amt}
+                                            type="button"
+                                            className={`donation-modal__amount-btn${!isCustomActive && form.amount === String(amt) ? ' donation-modal__amount-btn--active' : ''}`}
+                                            onClick={() => selectPreset(amt)}
+                                        >
+                                            ${amt}
+                                        </button>
+                                    ))}
+                                    <button
+                                        type="button"
+                                        className={`donation-modal__amount-btn${isCustomActive ? ' donation-modal__amount-btn--active' : ''}`}
+                                        onClick={() => customInputRef.current?.focus()}
+                                    >
+                                        Custom
+                                    </button>
+                                    <input
+                                        ref={customInputRef}
+                                        className="donation-modal__input donation-modal__custom-input"
+                                        type="number"
+                                        value={customAmount}
+                                        onChange={handleCustomChange}
+                                        onFocus={() => setCustomFocused(true)}
+                                        onBlur={() => setCustomFocused(false)}
+                                        placeholder="Enter amount…"
+                                        min="0.50"
+                                        step="0.01"
+                                    />
+                                </div>
+                            </div>
 
-                        <button
-                            className="donation-modal__btn"
-                            type="submit"
-                            disabled={status === 'loading'}
-                        >
-                            {status === 'loading' ? 'Sending…' : 'Send Donation'}
-                        </button>
-                    </form>
+                            <label className="donation-modal__label">
+                                Message <span className="donation-modal__optional">(optional)</span>
+                                <textarea
+                                    className="donation-modal__input donation-modal__textarea"
+                                    name="message"
+                                    value={form.message}
+                                    onChange={handleChange}
+                                    placeholder="Leave Bánh a message…"
+                                    rows={3}
+                                />
+                            </label>
+
+                            {status === 'error' && (
+                                <p className="donation-modal__error">{errorMsg}</p>
+                            )}
+
+                            <button
+                                className="donation-modal__btn"
+                                type="submit"
+                                disabled={status === 'loading'}
+                            >
+                                {status === 'loading'
+                                    ? 'Preparing…'
+                                    : `Continue → $${parseFloat(form.amount || '0').toFixed(2)}`
+                                }
+                            </button>
+                        </form>
+                    </>
+                )}
+
+                {step === 'payment' && clientSecret && (
+                    <EmbeddedCheckoutProvider stripe={stripePromise} options={{ clientSecret }}>
+                        <EmbeddedCheckout />
+                    </EmbeddedCheckoutProvider>
                 )}
             </div>
         </div>

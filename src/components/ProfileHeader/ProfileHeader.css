@@ -53,6 +53,7 @@
 
 .profile-header__share-menu {
     position: absolute;
+    background: darksalmon;
     top: calc(100% + 8px);
     right: 0;
     min-width: 220px;
@@ -171,6 +172,7 @@
 .stats-container {
     width: 100%;
     display: flex;
+    justify-content: center;
     align-items: center;
     gap: var(--spacing-md);
     margin-top: var(--spacing-lg);
@@ -259,6 +261,7 @@
 
 .stats-counter__panel {
     flex: 1;
+    max-width: 300px;
     border-radius: var(--radius-md);
     padding: var(--spacing-md) var(--spacing-lg);
     display: flex;
