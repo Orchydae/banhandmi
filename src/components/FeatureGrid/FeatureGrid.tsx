@@ -1,5 +1,8 @@
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Sparkles, Heart, ThumbsDown, Clock } from 'lucide-react'
+import { Sparkles, Heart, ThumbsDown, Clock, HeartHandshake, Crown } from 'lucide-react'
+import DonationModal from '../DonationModal/DonationModal'
+import DonorWallModal from '../DonorWallModal/DonorWallModal'
 import './FeatureGrid.css'
 
 interface FeatureGridProps {
@@ -7,8 +10,25 @@ interface FeatureGridProps {
 }
 
 export default function FeatureGrid({ onFeatureClick }: FeatureGridProps) {
+    const [showDonation, setShowDonation] = useState(false)
+    const [showDonorWall, setShowDonorWall] = useState(false)
+
     return (
+        <>
         <section className="feature-grid" id="feature-grid">
+            {/* Donate */}
+            <button
+                className="feature-card feature-card--donate glass"
+                id="card-donate"
+                onClick={() => setShowDonation(true)}
+            >
+                <div className="feature-card__icon">
+                    <HeartHandshake size={22} />
+                </div>
+                <span className="feature-card__title">Buy Bánh a Treat</span>
+                <span className="feature-card__subtitle">Support_the_pup</span>
+            </button>
+
             {/* Dream Artifacts */}
             <Link
                 to="/dream-artifacts"
@@ -49,6 +69,18 @@ export default function FeatureGrid({ onFeatureClick }: FeatureGridProps) {
                 <span className="feature-card__title">Disapproved Items</span>
             </Link>
 
+            {/* Donor Wall */}
+            <button
+                className="feature-card glass"
+                id="card-donor-wall"
+                onClick={() => setShowDonorWall(true)}
+            >
+                <div className="feature-card__icon">
+                    <Crown size={22} />
+                </div>
+                <span className="feature-card__title">Donor Wall</span>
+            </button>
+
             {/* Upcoming soon */}
             <div className="feature-card feature-card--dark" id="card-upcoming">
                 <div className="feature-card__icon">
@@ -57,5 +89,9 @@ export default function FeatureGrid({ onFeatureClick }: FeatureGridProps) {
                 <span className="feature-card__title">Upcoming soon…</span>
             </div>
         </section>
+
+        {showDonation && <DonationModal onClose={() => setShowDonation(false)} />}
+        {showDonorWall && <DonorWallModal onClose={() => setShowDonorWall(false)} />}
+        </>
     )
 }

@@ -140,7 +140,7 @@ export default function ProfileHeader({ onFeed }: ProfileHeaderProps) {
                         <Share2 size={20} />
                     </button>
                     {shareOpen && (
-                        <div className="profile-header__share-menu glass">
+                        <div className="profile-header__share-menu">
                             <span className="profile-header__share-menu-title">Share via</span>
                             <div className="profile-header__share-grid">
                                 {shareLinks.map(link => (

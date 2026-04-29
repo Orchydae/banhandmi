@@ -2,6 +2,7 @@
   width: 100%;
   max-width: 420px;
   padding: var(--spacing-lg) var(--spacing-md);
+  padding-top: calc(var(--marquee-height, 36px) + var(--spacing-lg));
   padding-bottom: var(--spacing-2xl);
   display: flex;
   flex-direction: column;
