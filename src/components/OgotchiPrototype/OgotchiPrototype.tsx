@@ -26,11 +26,13 @@ interface OgotchiPrototypeProps {
 }
 
 const OgotchiPrototype = forwardRef<OgotchiPrototypeRef, OgotchiPrototypeProps>(({ isDragging }, ref) => {
-    const { hunger, feed } = useHungerMeter();
+    const { hunger, loading: hungerLoading, feed } = useHungerMeter();
     const { mood, pet } = useMoodMeter();
     const { hasPooped, cleanPoop } = useHasPooped();
     const { ageString, weight, weightHistory, loading: profileLoading, addWeight } = useDogProfile();
     const [playingState, setPlayingState] = useState<'idle' | 'eating' | 'petting' | 'pooping' | 'menu' | OgotchiAction>('idle');
+    // True until hunger data is fetched from the server — prevents dead.png flash on load
+    const isLoading = hungerLoading;
     const [showGraph, setShowGraph] = useState(false);
     const [isInputtingWeight, setIsInputtingWeight] = useState(false);
     const [newWeightValue, setNewWeightValue] = useState('');
@@ -60,7 +62,6 @@ const OgotchiPrototype = forwardRef<OgotchiPrototypeRef, OgotchiPrototypeProps>(
     const poopingVideoRef = useRef<HTMLVideoElement>(null);
     const button1VideoRef = useRef<HTMLVideoElement>(null);
     const button2VideoRef = useRef<HTMLVideoElement>(null);
-    const button3VideoRef = useRef<HTMLVideoElement>(null);
     const audioRef = useRef<HTMLAudioElement>(null);
     const coinAudioRef = useRef<HTMLAudioElement>(null);
     const rafRef = useRef<number | null>(null);
@@ -68,15 +69,8 @@ const OgotchiPrototype = forwardRef<OgotchiPrototypeRef, OgotchiPrototypeProps>(
     const showRotation = isDragging || mouseOnPage;
 
     const stopAllVideos = () => {
-        const refs = [
-            eatingVideoRef, pettingVideoRef, poopingVideoRef,
-            button1VideoRef, button2VideoRef, button3VideoRef
-        ];
-        refs.forEach(ref => {
-            if (ref.current) {
-                ref.current.pause();
-                ref.current.currentTime = 0;
-            }
+        [eatingVideoRef, pettingVideoRef, poopingVideoRef, button1VideoRef, button2VideoRef].forEach(r => {
+            if (r.current) { r.current.pause(); r.current.currentTime = 0; }
         });
     };
 
@@ -302,12 +296,32 @@ const OgotchiPrototype = forwardRef<OgotchiPrototypeRef, OgotchiPrototypeProps>(
                     style={{ touchAction: 'none' }}
                 >
                     <HealthMeters hunger={hunger} mood={mood} />
-                    <img
-                        className={`ogotchi-prototype__avatar ogotchi-prototype__avatar--photo ${playingState !== 'idle' || showRotation ? 'ogotchi-prototype__avatar--hidden' : ''}`}
-                        src={hunger < 25 ? '/dead.png' : '/webphoto.jpg'}
-                        alt="Bánh the Shiba Inu"
-                    />
-                    <RotationVideo visible={showRotation && playingState === 'idle'} />
+
+                    {/* Loading splash — shown until hunger data arrives from the server */}
+                    {isLoading && (
+                        <video
+                            className="ogotchi-prototype__avatar ogotchi-prototype__avatar--loading"
+                            src="/shibawalk.mp4"
+                            autoPlay
+                            loop
+                            muted
+                            playsInline
+                        />
+                    )}
+
+                    {/* Static photo — hidden while loading, while any video is active, or during 3-D rotation */}
+                    {!isLoading && (
+                        <img
+                            className={`ogotchi-prototype__avatar ogotchi-prototype__avatar--photo${
+                                playingState !== 'idle' || showRotation ? ' ogotchi-prototype__avatar--hidden' : ''
+                            }`}
+                            src={hunger < 25 ? '/dead.png' : '/webphoto.jpg'}
+                            alt="Bánh the Shiba Inu"
+                        />
+                    )}
+
+                    <RotationVideo visible={!isLoading && showRotation && playingState === 'idle'} />
+
                     <video
                         ref={eatingVideoRef}
                         className={`ogotchi-prototype__avatar ogotchi-prototype__avatar--video ${playingState === 'eating' ? 'ogotchi-prototype__avatar--visible' : ''}`}
@@ -347,14 +361,6 @@ const OgotchiPrototype = forwardRef<OgotchiPrototypeRef, OgotchiPrototypeProps>(
                         ref={button2VideoRef}
                         className={`ogotchi-prototype__avatar ogotchi-prototype__avatar--video ${playingState === 'button2' ? 'ogotchi-prototype__avatar--visible' : ''}`}
                         src="/bark2.mp4"
-                        playsInline
-                        preload="auto"
-                        onEnded={handleVideoEnded}
-                    />
-                    <video
-                        ref={button3VideoRef}
-                        className={`ogotchi-prototype__avatar ogotchi-prototype__avatar--video ${playingState === 'button3' ? 'ogotchi-prototype__avatar--visible' : ''}`}
-                        src="/scary.mp4"
                         playsInline
                         preload="auto"
                         onEnded={handleVideoEnded}

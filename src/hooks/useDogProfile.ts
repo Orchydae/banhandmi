@@ -55,7 +55,7 @@ export function useDogProfile() {
                 const weightPromise = supabase
                     .from('weight_history')
                     .select('date, weight')
-                    .order('date', { ascending: true })
+                    .order('date', { ascending: false })
                     .limit(5);
 
                 const [birthdateResult, weightResult] = await Promise.all([
