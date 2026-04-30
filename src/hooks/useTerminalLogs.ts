@@ -1,13 +1,14 @@
 import { useState, useCallback } from 'react'
 import type { LogEntry } from '../components/TerminalPanel/TerminalPanel'
+import type { TranslationKey } from '../i18n/translations'
 
-const INITIAL_LOGS: LogEntry[] = [
-    { id: 'init-1', message: 'Initializing bio-link protocol...' },
-    { id: 'init-2', message: 'Scanning for dream frequencies...' },
-    { id: 'init-3', message: 'Status: Stable', isStatus: true },
-]
+export function useTerminalLogs(t: (key: TranslationKey) => string) {
+    const INITIAL_LOGS: LogEntry[] = [
+        { id: 'init-1', message: t('terminal.init1') },
+        { id: 'init-2', message: t('terminal.init2') },
+        { id: 'init-3', message: t('terminal.init3'), isStatus: true },
+    ]
 
-export function useTerminalLogs() {
     const [logs, setLogs] = useState<LogEntry[]>(INITIAL_LOGS)
 
     const addLog = useCallback((entry: Omit<LogEntry, 'id'>) => {

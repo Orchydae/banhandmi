@@ -8,19 +8,21 @@ import DonorMarquee from './components/DonorMarquee/DonorMarquee'
 import DonationSuccess from './components/DonationSuccess/DonationSuccess'
 import CategoryPage from './modules/CategoryPage/CategoryPage'
 import { useTerminalLogs } from './hooks/useTerminalLogs'
-
-const TREAT_MESSAGES = [
-    'Thanks for the treato!',
-    'Woah! You\'re so kind ~ Waf!',
-    'Are you trying to get me fat?',
-]
+import { useLanguage } from './i18n/LanguageContext'
 
 function App() {
-    const { logs, addLog } = useTerminalLogs()
+    const { t } = useLanguage()
+    const { logs, addLog } = useTerminalLogs(t)
+
+    const TREAT_MESSAGES = [
+        t('treat.msg1'),
+        t('treat.msg2'),
+        t('treat.msg3'),
+    ]
 
     const handleFeatureClick = (featureName: string) => {
         const timestamp = new Date().toLocaleTimeString([], { hour12: false })
-        addLog({ timestamp, message: `Accessed module: ${featureName}` })
+        addLog({ timestamp, message: `${t('terminal.accessed')} ${featureName}` })
     }
 
     const handleFeed = () => {

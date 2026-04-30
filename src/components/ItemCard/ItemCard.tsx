@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { ExternalLink } from 'lucide-react'
 import type { Item } from '../../hooks/useItems'
+import { useLanguage } from '../../i18n/LanguageContext'
 import './ItemCard.css'
 
 interface ItemCardProps {
@@ -8,16 +9,20 @@ interface ItemCardProps {
 }
 
 export default function ItemCard({ item }: ItemCardProps) {
+    const { lang, t } = useLanguage()
     const [expanded, setExpanded] = useState(false)
     const [isClamped, setIsClamped] = useState(false)
     const descRef = useRef<HTMLParagraphElement>(null)
+
+    const displayName = (lang === 'fr' && item.name_fr) ? item.name_fr : item.name
+    const displayDesc = (lang === 'fr' && item.description_fr) ? item.description_fr : item.description
 
     useEffect(() => {
         const el = descRef.current
         if (el) {
             setIsClamped(el.scrollHeight > el.clientHeight)
         }
-    }, [item.description])
+    }, [displayDesc])
 
     const handleToggle = (e: React.MouseEvent) => {
         e.preventDefault()
@@ -31,29 +36,29 @@ export default function ItemCard({ item }: ItemCardProps) {
                 <div className="item-card__image-wrap">
                     <img
                         src={item.image_url}
-                        alt={item.name}
+                        alt={displayName}
                         className="item-card__image"
                         loading="lazy"
                     />
                 </div>
             )}
             <div className="item-card__body">
-                <span className="item-card__name">{item.name}</span>
-                {item.description && (
+                <span className="item-card__name">{displayName}</span>
+                {displayDesc && (
                     <div className="item-card__desc-wrap">
                         <p
                             ref={descRef}
                             className={`item-card__desc ${expanded ? 'item-card__desc--expanded' : ''}`}
                         >
-                            {item.description}
+                            {displayDesc}
                         </p>
                         {isClamped && (
                             <button
                                 className="item-card__more"
                                 onClick={handleToggle}
-                                aria-label={expanded ? 'Show less' : 'Show more'}
+                                aria-label={expanded ? t('item.showLess') : t('item.viewMore')}
                             >
-                                {expanded ? 'show less' : '...view more'}
+                                {expanded ? t('item.showLess') : t('item.viewMore')}
                             </button>
                         )}
                     </div>
@@ -79,7 +84,7 @@ export default function ItemCard({ item }: ItemCardProps) {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="item-card glass"
-                aria-label={`View ${item.name} on store`}
+                aria-label={`View ${displayName} on store`}
             >
                 {content}
             </a>

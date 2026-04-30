@@ -2,6 +2,7 @@ import { useRef, useEffect, useCallback, useState } from 'react'
 import { Share2, Cookie, Facebook, Copy, Check, X as XIcon, MessageCircle, Send } from 'lucide-react'
 import { useTreatsCounter } from '../../hooks/useTreatsCounter'
 import OgotchiPrototype, { OgotchiPrototypeRef } from '../OgotchiPrototype/OgotchiPrototype'
+import { useLanguage } from '../../i18n/LanguageContext'
 import './ProfileHeader.css'
 
 interface ProfileHeaderProps {
@@ -10,6 +11,7 @@ interface ProfileHeaderProps {
 
 export default function ProfileHeader({ onFeed }: ProfileHeaderProps) {
     const { treats, increment } = useTreatsCounter()
+    const { t, lang, setLang } = useLanguage()
     const [isDragging, setIsDragging] = useState(false)
     const [shareOpen, setShareOpen] = useState(false)
     const shareMenuRef = useRef<HTMLDivElement>(null)
@@ -106,7 +108,7 @@ export default function ProfileHeader({ onFeed }: ProfileHeaderProps) {
     }
 
     const pageUrl = encodeURIComponent(window.location.href)
-    const pageTitle = encodeURIComponent('Check out Bánh the Shiba Inu!')
+    const pageTitle = encodeURIComponent(t('share.pageTitle'))
 
     const shareLinks = [
         { label: 'Facebook', icon: <Facebook size={18} />, url: `https://www.facebook.com/sharer/sharer.php?u=${pageUrl}` },
@@ -135,55 +137,76 @@ export default function ProfileHeader({ onFeed }: ProfileHeaderProps) {
         <header className="profile-header" id="profile-header">
             <div className="profile-header__top-bar">
                 <span className="profile-header__handle">@banhandmi</span>
-                <div className="profile-header__share-wrapper" ref={shareMenuRef}>
-                    <button className="profile-header__share-btn" aria-label="Share" onClick={toggleShareMenu}>
-                        <Share2 size={20} />
-                    </button>
-                    {shareOpen && (
-                        <div className="profile-header__share-menu">
-                            <span className="profile-header__share-menu-title">Share via</span>
-                            <div className="profile-header__share-grid">
-                                {shareLinks.map(link => (
-                                    <a
-                                        key={link.label}
-                                        href={link.url}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="profile-header__share-item"
-                                        onClick={() => setShareOpen(false)}
-                                    >
-                                        <span className="profile-header__share-icon">{link.icon}</span>
-                                        <span className="profile-header__share-label">{link.label}</span>
-                                    </a>
-                                ))}
-                                <button
-                                    className="profile-header__share-item profile-header__share-item--copy"
-                                    onClick={handleCopyLink}
-                                >
-                                    <span className="profile-header__share-icon">
-                                        {copied ? <Check size={18} /> : <Copy size={18} />}
-                                    </span>
-                                    <span className="profile-header__share-label">
-                                        {copied ? 'Copied!' : 'Copy Link'}
-                                    </span>
-                                </button>
-                            </div>
+                <div className="profile-header__top-bar-actions">
+                    <div className="profile-header__lang-dropdown" role="navigation" aria-label="Language selector">
+                        <span className="profile-header__lang-current">
+                            {lang.toUpperCase()}
+                        </span>
+                        <div className="profile-header__lang-menu">
+                            <button
+                                className={`profile-header__lang-option${lang === 'en' ? ' profile-header__lang-option--active' : ''}`}
+                                onClick={() => setLang('en')}
+                            >
+                                EN
+                            </button>
+                            <button
+                                className={`profile-header__lang-option${lang === 'fr' ? ' profile-header__lang-option--active' : ''}`}
+                                onClick={() => setLang('fr')}
+                            >
+                                FR
+                            </button>
                         </div>
-                    )}
+                    </div>
+                    <div className="profile-header__share-wrapper" ref={shareMenuRef}>
+                        <button className="profile-header__share-btn" aria-label="Share" onClick={toggleShareMenu}>
+                            <Share2 size={20} />
+                        </button>
+                        {shareOpen && (
+                            <div className="profile-header__share-menu">
+                                <span className="profile-header__share-menu-title">{t('share.via')}</span>
+                                <div className="profile-header__share-grid">
+                                    {shareLinks.map(link => (
+                                        <a
+                                            key={link.label}
+                                            href={link.url}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="profile-header__share-item"
+                                            onClick={() => setShareOpen(false)}
+                                        >
+                                            <span className="profile-header__share-icon">{link.icon}</span>
+                                            <span className="profile-header__share-label">{link.label}</span>
+                                        </a>
+                                    ))}
+                                    <button
+                                        className="profile-header__share-item profile-header__share-item--copy"
+                                        onClick={handleCopyLink}
+                                    >
+                                        <span className="profile-header__share-icon">
+                                            {copied ? <Check size={18} /> : <Copy size={18} />}
+                                        </span>
+                                        <span className="profile-header__share-label">
+                                            {copied ? t('share.copied') : t('share.copyLink')}
+                                        </span>
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+                    </div>
                 </div>
             </div>
 
             <OgotchiPrototype ref={ogotchiRef} isDragging={isDragging} />
 
-            <p className="profile-header__bio">A Shiba Inu that reinvents reality and dreams.</p>
+            <p className="profile-header__bio">{t('profile.bio')}</p>
 
             <div className="stats-container">
                 <div className="stats-counter__panel">
-                    <span className="stats-counter__label">Number_of_treats_given</span>
+                    <span className="stats-counter__label">{t('feed.counter')}</span>
                     <span className="stats-counter__value">{formattedTreats}</span>
                 </div>
                 <div className="stats-counter__drag">
-                    <span className="stats-counter__drag-label">DRAG TO FEED!</span>
+                    <span className="stats-counter__drag-label">{t('feed.drag')}</span>
                     <div
                         ref={dragIconRef}
                         className={`stats-counter__drag-icon glass${isDragging ? ' stats-counter__drag-icon--dragging' : ''}`}

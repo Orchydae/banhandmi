@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { X, Crown } from 'lucide-react'
 import { getSupabase } from '../../lib/supabase'
+import { useLanguage } from '../../i18n/LanguageContext'
 import './DonorWallModal.css'
 
 interface Donation {
@@ -16,6 +17,7 @@ interface DonorWallModalProps {
 }
 
 export default function DonorWallModal({ onClose }: DonorWallModalProps) {
+    const { t } = useLanguage()
     const [donations, setDonations] = useState<Donation[]>([])
     const [loading, setLoading] = useState(true)
 
@@ -43,16 +45,16 @@ export default function DonorWallModal({ onClose }: DonorWallModalProps) {
                     <div className="donor-wall-modal__icon">
                         <Crown size={22} />
                     </div>
-                    <h2 className="donor-wall-modal__title">Donor Wall</h2>
-                    <p className="donor-wall-modal__subtitle">Hoomans who spoil Bánh</p>
+                    <h2 className="donor-wall-modal__title">{t('donorWall.title')}</h2>
+                    <p className="donor-wall-modal__subtitle">{t('donorWall.subtitle')}</p>
                 </div>
 
                 <div className="donor-wall-modal__list">
                     {loading && (
-                        <p className="donor-wall-modal__empty">Loading…</p>
+                        <p className="donor-wall-modal__empty">{t('donorWall.loading')}</p>
                     )}
                     {!loading && donations.length === 0 && (
-                        <p className="donor-wall-modal__empty">No donations yet. Be the first! 🐾</p>
+                        <p className="donor-wall-modal__empty">{t('donorWall.empty')}</p>
                     )}
                     {donations.map((d, i) => (
                         <div key={d.id} className="donor-wall-modal__item">

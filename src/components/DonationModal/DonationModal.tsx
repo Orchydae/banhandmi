@@ -3,6 +3,7 @@ import { X, HeartHandshake } from 'lucide-react'
 import { loadStripe } from '@stripe/stripe-js'
 import { EmbeddedCheckout, EmbeddedCheckoutProvider } from '@stripe/react-stripe-js'
 import { getSupabase } from '../../lib/supabase'
+import { useLanguage } from '../../i18n/LanguageContext'
 import './DonationModal.css'
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY ?? '')
@@ -18,6 +19,7 @@ interface FormState {
 }
 
 export default function DonationModal({ onClose }: DonationModalProps) {
+    const { t } = useLanguage()
     const AMOUNTS = [2, 5, 10, 25]
     const [step, setStep] = useState<'form' | 'payment'>('form')
     const [form, setForm] = useState<FormState>({ donorName: '', message: '', amount: '10' })
@@ -51,14 +53,14 @@ export default function DonationModal({ onClose }: DonationModalProps) {
 
         const amountCents = Math.round(parseFloat(form.amount) * 100)
         if (isNaN(amountCents) || amountCents < 50) {
-            setErrorMsg('Minimum donation is $0.50.')
+            setErrorMsg(t('donation.minError'))
             setStatus('error')
             return
         }
 
         const supabase = getSupabase()
         if (!supabase) {
-            setErrorMsg('Service not configured.')
+            setErrorMsg(t('donation.configError'))
             setStatus('error')
             return
         }
@@ -77,7 +79,7 @@ export default function DonationModal({ onClose }: DonationModalProps) {
             setClientSecret(data.clientSecret)
             setStep('payment')
         } catch (err: unknown) {
-            setErrorMsg(err instanceof Error ? err.message : 'Something went wrong.')
+            setErrorMsg(err instanceof Error ? err.message : t('donation.unknownError'))
             setStatus('error')
         } finally {
             setStatus('idle')
@@ -100,25 +102,25 @@ export default function DonationModal({ onClose }: DonationModalProps) {
                             <div className="donation-modal__icon">
                                 <HeartHandshake size={22} />
                             </div>
-                            <h2 className="donation-modal__title">Buy Bánh a Treat</h2>
+                            <h2 className="donation-modal__title">{t('donation.title')}</h2>
                         </div>
 
                         <form className="donation-modal__form" onSubmit={handleSubmit}>
                             <label className="donation-modal__label">
-                                Your name
+                                {t('donation.yourName')}
                                 <input
                                     className="donation-modal__input"
                                     type="text"
                                     name="donorName"
                                     value={form.donorName}
                                     onChange={handleChange}
-                                    placeholder="e.g. Kind Hooman"
+                                    placeholder={t('donation.namePlaceholder')}
                                     required
                                 />
                             </label>
 
                             <div className="donation-modal__label">
-                                Amount (USD)
+                                {t('donation.amount')}
                                 <div className="donation-modal__amounts">
                                     {AMOUNTS.map(amt => (
                                         <button
@@ -135,7 +137,7 @@ export default function DonationModal({ onClose }: DonationModalProps) {
                                         className={`donation-modal__amount-btn${isCustomActive ? ' donation-modal__amount-btn--active' : ''}`}
                                         onClick={() => customInputRef.current?.focus()}
                                     >
-                                        Custom
+                                        {t('donation.custom')}
                                     </button>
                                     <input
                                         ref={customInputRef}
@@ -145,7 +147,7 @@ export default function DonationModal({ onClose }: DonationModalProps) {
                                         onChange={handleCustomChange}
                                         onFocus={() => setCustomFocused(true)}
                                         onBlur={() => setCustomFocused(false)}
-                                        placeholder="Enter amount…"
+                                        placeholder={t('donation.customPlaceholder')}
                                         min="0.50"
                                         step="0.01"
                                     />
@@ -153,13 +155,13 @@ export default function DonationModal({ onClose }: DonationModalProps) {
                             </div>
 
                             <label className="donation-modal__label">
-                                Message <span className="donation-modal__optional">(optional)</span>
+                                {t('donation.message')} <span className="donation-modal__optional">{t('donation.optional')}</span>
                                 <textarea
                                     className="donation-modal__input donation-modal__textarea"
                                     name="message"
                                     value={form.message}
                                     onChange={handleChange}
-                                    placeholder="Leave Bánh a message…"
+                                    placeholder={t('donation.messagePlaceholder')}
                                     rows={3}
                                 />
                             </label>
@@ -174,8 +176,8 @@ export default function DonationModal({ onClose }: DonationModalProps) {
                                 disabled={status === 'loading'}
                             >
                                 {status === 'loading'
-                                    ? 'Preparing…'
-                                    : `Continue → $${parseFloat(form.amount || '0').toFixed(2)}`
+                                    ? t('donation.preparing')
+                                    : `${t('donation.continue')} $${parseFloat(form.amount || '0').toFixed(2)}`
                                 }
                             </button>
                         </form>

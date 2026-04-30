@@ -7,7 +7,9 @@ export interface Item {
     id: string
     category: ItemCategory
     name: string
+    name_fr: string | null
     description: string | null
+    description_fr: string | null
     image_url: string | null
     affiliate_url: string | null
     price_hint: number | null
