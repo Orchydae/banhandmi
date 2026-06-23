@@ -65,6 +65,9 @@ const OgotchiPrototype = forwardRef<OgotchiPrototypeRef, OgotchiPrototypeProps>(
     const audioRef = useRef<HTMLAudioElement>(null);
     const coinAudioRef = useRef<HTMLAudioElement>(null);
     const rafRef = useRef<number | null>(null);
+    // iOS/WebKit won't repaint a <video> on currentTime changes until it has been activated
+    // by a user-gesture play(). Tracks whether the petting video has been primed once.
+    const pettingPrimedRef = useRef(false);
 
     const showRotation = isDragging || mouseOnPage;
 
@@ -219,7 +222,19 @@ const OgotchiPrototype = forwardRef<OgotchiPrototypeRef, OgotchiPrototypeProps>(
         setPlayingState('petting');
 
         if (pettingVideoRef.current) {
-            pettingVideoRef.current.pause();
+            const v = pettingVideoRef.current;
+            // On iOS, scrubbing (setting currentTime) only repaints once the video has been
+            // activated by a user-gesture play(). pointerdown is a valid gesture, so prime it
+            // once with a muted play()/pause(); afterwards we just pause and scrub frames.
+            if (!pettingPrimedRef.current) {
+                pettingPrimedRef.current = true;
+                const playPromise = v.play();
+                if (playPromise && typeof playPromise.then === 'function') {
+                    playPromise.then(() => v.pause()).catch(() => { });
+                }
+            } else {
+                v.pause();
+            }
             updateVideoTime(e.clientX);
         }
 

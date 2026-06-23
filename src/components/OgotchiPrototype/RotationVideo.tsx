@@ -41,6 +41,28 @@ export function RotationVideo({ visible }: RotationVideoProps) {
         });
     }, []);
 
+    // iOS/WebKit will not repaint a <video> in response to currentTime changes unless the
+    // element has been activated by a user-gesture play(). This video is only ever scrubbed
+    // (never played), so prime it once with a muted play()/pause() on the first pointer
+    // interaction anywhere on the page — pointerdown is a qualifying gesture, and it fires
+    // when the user starts dragging a treat. The video sits behind the static photo while
+    // idle, so the brief priming is invisible.
+    useEffect(() => {
+        const video = videoRef.current;
+        if (!video) return;
+
+        const prime = () => {
+            const playPromise = video.play();
+            if (playPromise && typeof playPromise.then === 'function') {
+                playPromise.then(() => video.pause()).catch(() => { });
+            }
+            document.removeEventListener('pointerdown', prime);
+        };
+
+        document.addEventListener('pointerdown', prime);
+        return () => document.removeEventListener('pointerdown', prime);
+    }, []);
+
     useEffect(() => {
         if (!visible) return;
 
