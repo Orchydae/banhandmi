@@ -7,20 +7,29 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "migrate": "node --env-file=.env scripts/migrate.mjs",
+    "deploy:api": "neon deploy --env .env"
   },
   "dependencies": {
+    "@neon/functions": "^0.8.0",
     "@stripe/react-stripe-js": "^6.2.0",
     "@stripe/stripe-js": "^9.3.1",
-    "@supabase/supabase-js": "^2.98.0",
+    "hono": "^4.13.5",
     "lucide-react": "^0.577.0",
+    "pg": "^8.23.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-router-dom": "^7.13.1",
-    "recharts": "^3.8.0"
+    "recharts": "^3.8.0",
+    "stripe": "^22.5.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.21.0",
+    "@neon/config": "^1.0.5",
+    "@neon/env": "^1.1.4",
+    "@types/node": "^26.4.0",
+    "@types/pg": "^8.23.1",
     "@types/react": "^19.0.10",
     "@types/react-dom": "^19.0.4",
     "@vitejs/plugin-react": "^4.3.4",
@@ -28,7 +37,6 @@
     "eslint-plugin-react-hooks": "^5.1.0",
     "eslint-plugin-react-refresh": "^0.4.19",
     "globals": "^15.15.0",
-    "supabase": "^2.95.6",
     "typescript": "~5.7.2",
     "typescript-eslint": "^8.24.1",
     "vite": "^6.2.0"

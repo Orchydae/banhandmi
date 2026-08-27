@@ -33,5 +33,9 @@ pnpm-debug.log*
 # TypeScript cache
 *.tsbuildinfo
 
-# Supabase local state
-supabase/.temp/
+# Neon workspace link
+.neon
+
+# Claude Code skill symlinks — machine-specific absolute paths.
+# The real skill files live in .agents/skills/ and are committed.
+.claude/skills/

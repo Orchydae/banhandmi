@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { X, Crown } from 'lucide-react'
-import { getSupabase } from '../../lib/supabase'
+import { apiGet } from '../../lib/api'
 import { useLanguage } from '../../i18n/LanguageContext'
 import './DonorWallModal.css'
 
@@ -22,16 +22,14 @@ export default function DonorWallModal({ onClose }: DonorWallModalProps) {
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
-        const supabase = getSupabase()
-        if (!supabase) { setLoading(false); return }
-        supabase
-            .from('donations')
-            .select('id, donor_name, message, amount_cents, created_at')
-            .order('amount_cents', { ascending: false })
-            .then(({ data }) => {
-                if (data) setDonations(data)
-                setLoading(false)
-            })
+        let cancelled = false
+
+        apiGet<Donation[]>('/donations?sort=top')
+            .then(data => { if (!cancelled) setDonations(data) })
+            .catch(err => console.error('[donor-wall] failed to load donations:', err))
+            .finally(() => { if (!cancelled) setLoading(false) })
+
+        return () => { cancelled = true }
     }, [])
 
     return (

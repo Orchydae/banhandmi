@@ -2,7 +2,7 @@ import { useRef, useState } from 'react'
 import { X, HeartHandshake } from 'lucide-react'
 import { loadStripe } from '@stripe/stripe-js'
 import { EmbeddedCheckout, EmbeddedCheckoutProvider } from '@stripe/react-stripe-js'
-import { getSupabase } from '../../lib/supabase'
+import { apiPost } from '../../lib/api'
 import { useLanguage } from '../../i18n/LanguageContext'
 import './DonationModal.css'
 
@@ -58,24 +58,15 @@ export default function DonationModal({ onClose }: DonationModalProps) {
             return
         }
 
-        const supabase = getSupabase()
-        if (!supabase) {
-            setErrorMsg(t('donation.configError'))
-            setStatus('error')
-            return
-        }
-
         try {
-            const { data, error } = await supabase.functions.invoke('create-checkout-session', {
-                body: {
-                    amount_cents: amountCents,
-                    donor_name: form.donorName.trim(),
-                    message: form.message.trim() || null,
-                    return_url: `${window.location.origin}/donation-success`,
-                },
+            // return_url is resolved by the API from this page's origin, so it
+            // is no longer sent from here.
+            const data = await apiPost<{ clientSecret: string }>('/checkout-session', {
+                amount_cents: amountCents,
+                donor_name: form.donorName.trim(),
+                message: form.message.trim() || null,
             })
 
-            if (error) throw new Error(error.message)
             setClientSecret(data.clientSecret)
             setStep('payment')
         } catch (err: unknown) {
