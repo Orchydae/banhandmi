@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { getSupabase } from '../lib/supabase'
+import { apiGet } from '../lib/api'
 
 export type ItemCategory = 'dream_artifact' | 'favorite_treat' | 'disapproved_item'
 
@@ -33,37 +33,21 @@ export function useItems(category: ItemCategory): UseItemsResult {
     useEffect(() => {
         let cancelled = false
 
-        async function fetchItems() {
-            setLoading(true)
-            setError(null)
+        setLoading(true)
+        setError(null)
 
-            const supabase = getSupabase()
-            if (!supabase) {
+        apiGet<Item[]>(`/items?category=${encodeURIComponent(category)}`)
+            .then((data) => {
+                if (!cancelled) setItems(data)
+            })
+            .catch((err: unknown) => {
+                if (cancelled) return
+                setError(err instanceof Error ? err.message : 'Failed to load items')
                 setItems([])
-                setLoading(false)
-                return
-            }
-
-            const { data, error: fetchError } = await supabase
-                .from('items')
-                .select('*')
-                .eq('category', category)
-                .eq('is_active', true)
-                .order('display_order', { ascending: true })
-
-            if (cancelled) return
-
-            if (fetchError) {
-                setError(fetchError.message)
-                setItems([])
-            } else {
-                setItems(data as Item[])
-            }
-
-            setLoading(false)
-        }
-
-        fetchItems()
+            })
+            .finally(() => {
+                if (!cancelled) setLoading(false)
+            })
 
         return () => {
             cancelled = true

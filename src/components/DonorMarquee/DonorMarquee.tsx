@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { getSupabase } from '../../lib/supabase'
+import { apiGet } from '../../lib/api'
 import './DonorMarquee.css'
 
 interface Donation {
@@ -13,14 +13,13 @@ export default function DonorMarquee() {
     const [donations, setDonations] = useState<Donation[]>([])
 
     useEffect(() => {
-        const supabase = getSupabase()
-        if (!supabase) return
-        supabase
-            .from('donations')
-            .select('id, donor_name, message, amount_cents')
-            .order('created_at', { ascending: false })
-            .limit(30)
-            .then(({ data }) => { if (data) setDonations(data) })
+        let cancelled = false
+
+        apiGet<Donation[]>('/donations?sort=recent&limit=30')
+            .then(data => { if (!cancelled) setDonations(data) })
+            .catch(err => console.error('[donor-marquee] failed to load donations:', err))
+
+        return () => { cancelled = true }
     }, [])
 
     if (donations.length === 0) return null
